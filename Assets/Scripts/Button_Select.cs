@@ -7,18 +7,18 @@ using UnityEngine.SceneManagement;
 //SelectSceneのボタンにアタッチ
 public class Button_Select : MonoBehaviour {
 
-    public AudioSource audioSource; //クリック音
+    public AudioSource audioSource;         //クリック音
 
-    public GameObject normalplay;   //通常プレイ
-    public GameObject timeattack;  //タイムアタック
-    public GameObject description; //ルール
-    public GameObject operation;   //操作
+    public GameObject normalplay;           //通常プレイ
+    public GameObject timeattack;           //タイムアタック
+    public GameObject description;          //ルール
+    public GameObject operation;            //操作
 
-    public GameObject des_GuideDisplay;  //ルール説明
-    public GameObject ope_GuideDisplay;  //操作説明
-    public GameObject difficultyDisplay; //難易度選択
+    public GameObject des_GuideDisplay;     //ルール説明
+    public GameObject ope_GuideDisplay;     //操作説明
+    public GameObject difficultyDisplay;    //難易度選択
 
-    public static bool is_Normalplay; //通常プレイかタイムアタックか
+    public static bool is_Normalplay;       //通常プレイかタイムアタックか
 
 	// Use this for initialization
 	void Start () {
@@ -30,44 +30,51 @@ public class Button_Select : MonoBehaviour {
 		
 	}
 
-    public void NormalPlay_Click() //通常プレイを押したときの動作
+    public void NormalPlay_Click()  //通常プレイを押したときの動作
     {
         audioSource.Play();
         is_Normalplay = true;
+
         normalplay.SetActive(false);
-        difficultyDisplay.SetActive(true);
+        difficultyDisplay.SetActive(true);  //難易度選択だけを表示する
         timeattack.SetActive(false);
         description.SetActive(false);
         operation.SetActive(false);
     }
 
-    public void Easy_Click() //かんたんを選択
+    public void Easy_Click()        //かんたんを選択
     {
         audioSource.Play();
-        GameScript.msize = new int[] { 11, 13, 15 }; //迷路の大きさをセット
+        GameScript.msize = new int[] { 11, 13, 15 };    //迷路の大きさ(11, 13, 15)
         StartCoroutine(LoadScene("GameScene", 1.0f));
     }
 
-    public void Normal_Click() //ふつうを選択
+    public void Normal_Click()      //ふつうを選択
     {
         audioSource.Play();
-        GameScript.msize = new int[] { 15, 17, 19 };
+        GameScript.msize = new int[] { 15, 17, 19 };    //迷路の大きさ(15, 17, 19)
         StartCoroutine(LoadScene("GameScene", 1.0f));
     }
     
-    public void Difficult_Click() //難しいを選択
+    public void Difficult_Click()   //難しいを選択
     {
         audioSource.Play();
-        GameScript.msize = new int[] { 19, 21, 23 };
+        GameScript.msize = new int[] { 19, 21, 23 };    //迷路の大きさ(19, 21, 23)
         StartCoroutine(LoadScene("GameScene", 1.0f));
     }
 
-    public void TimeAttack_Click() //タイムアタックを押したときの動作
+    public void TimeAttack_Click()  //タイムアタックを押したときの動作
     {
         audioSource.Play();
         is_Normalplay = false;
         GameScript.msize = new int[] { 13, 17, 21 };
         StartCoroutine(LoadScene("CountScene", 1.0f));
+    }
+
+    private IEnumerator LoadScene(string name, float waitTime)  //シーン遷移
+    {
+        yield return new WaitForSeconds(waitTime);
+        SceneManager.LoadScene(name);
     }
 
     public void Description_Click() //ルール説明を押したときの動作
@@ -76,25 +83,19 @@ public class Button_Select : MonoBehaviour {
         des_GuideDisplay.SetActive(true);
     }
 
-    public void Operation_Click() //操作説明を押したときの動作
+    public void Operation_Click()   //操作説明を押したときの動作
     {
         audioSource.Play();
         ope_GuideDisplay.SetActive(true);
     }
 
-    public void DesClose_Click() //ルール説明の×ボタンを押したときの動作
+    public void DesClose_Click()    //ルール説明の×ボタンを押したときの動作
     {
         des_GuideDisplay.SetActive(false);
     }
 
-    public void OpeClose_Click() //操作説明の×ボタンを押したときの動作
+    public void OpeClose_Click()    //操作説明の×ボタンを押したときの動作
     {
         ope_GuideDisplay.SetActive(false);
-    }
-
-    IEnumerator LoadScene(string name, float waitTime) //待ってからシーン遷移
-    {
-        yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene(name);
     }
 }

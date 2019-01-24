@@ -8,13 +8,13 @@ using UnityEngine.UI;
 //ResultSceneのResultDirectorにアタッチ(タイムアタックの結果表示)
 public class ResultScript : MonoBehaviour {
 
-    public Text clearTimeText;
-    public Text bestTimeText;
+    public Text clearTimeText;  //クリア時間の表示
+    public Text bestTimeText;   //ベストタイム
 
-    private int bestTime;
+    private int bestTime;   //ベストタイム
 
-    private int minutes;
-    private int seconds;
+    private int minutes;    //分
+    private int seconds;    //秒
 
 	// Use this for initialization
 	void Start () {
@@ -42,7 +42,7 @@ public class ResultScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(0)) //押されたらSelectシーンへ
+        if (Input.GetMouseButtonDown(0))    //押されたらSelectシーンへ
         {
             SceneManager.LoadScene("SelectScene");
         }

@@ -5,18 +5,18 @@ using UnityEngine;
 //StartSceneのStartPlayerにアタッチ(タイトル画面のプレイヤー)
 public class Player_Start : MonoBehaviour {
 
-    private int[] dir = new int[] { -1, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 0, 0 }; //0:右 1:上 2:左 3:下
-    private int dnum;
+    private int[] dir = new int[] { -1, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 0, 0 };   //0:右 1:上 2:左 3:下
+    private int dnum;                   //dirの番号
 
     //回転
-    Vector3 rotatePoint = Vector3.zero; //回転中心
-    Vector3 rotateAxis = Vector3.zero; //回転軸
+    private Vector3 rotatePoint = Vector3.zero; //回転中心
+    private Vector3 rotateAxis = Vector3.zero;  //回転軸
 
     private float cubeAngle = 0.0f;     //回転角度
     private float cubeSizeHalf = 0.0f;  //キューブの半分
     private bool isRotate = false;      //回転中か
 
-    private int[] startPos = new int[] {5, 1};
+    private int[] startPos = new int[] {5, 1};  //最初の位置
 
     // Use this for initialization
     void Start () {
@@ -27,21 +27,21 @@ public class Player_Start : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (isRotate) return; //回転中は何もしない
+        if (isRotate) return;   //回転中は何もしない
 
         dnum++;
         if (dnum > 16)
         {
             dnum = 0;
-            transform.position = new Vector3(startPos[1], 0.0f, startPos[0]); //スタート位置に移動
+            transform.position = new Vector3(startPos[1], 0.0f, startPos[0]);   //スタート位置に移動
         }
 
-        MoveDirection();
+        MoveDirection();        //回転中心と回転軸を決める
 
         StartCoroutine(MoveCube()); //ここで回転を始める
     }
 
-    void MoveDirection()
+    private void MoveDirection()    //回転中心と回転軸の決定
     {
         if (dir[dnum] == 0)  //右
         {
@@ -68,17 +68,17 @@ public class Player_Start : MonoBehaviour {
         }
     }
 
-    IEnumerator MoveCube() //回転処理
+    private IEnumerator MoveCube()  //回転処理
     {
-        isRotate = true; //回転中
+        isRotate = true;    //回転中
 
         float sumAngle = 0.0f;
-        while (sumAngle < 90.0f) //90度になるまで回す
+        while (sumAngle < 90.0f)    //90度になるまで回す
         {
-            cubeAngle = 6.0f;  //回転速度
+            cubeAngle = 6.0f;       //回転速度
             sumAngle += cubeAngle;
 
-            if (sumAngle > 90.0f) //回しすぎないように調整
+            if (sumAngle > 90.0f)   //回しすぎないように調整
             {
                 cubeAngle -= sumAngle - 90.0f;
             }
@@ -87,7 +87,7 @@ public class Player_Start : MonoBehaviour {
             yield return null;
         }
 
-        isRotate = false; //回転終了
+        isRotate = false;   //回転終了
         rotatePoint = Vector3.zero;
         rotateAxis = Vector3.zero;
 

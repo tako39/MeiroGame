@@ -10,20 +10,20 @@ public class CountScript : MonoBehaviour {
 
     public AudioSource audioSource; //カウントダウン音
 
-    private float sumTime; //時間の計測
-    private int seconds;   //カウントダウン用
+    private float sumTime;      //時間の計測
+    private int seconds;        //カウントダウン用
 
-    public Text countText;
+    public Text countText;      //カウントの表示
 
     // Use this for initialization
     void Start () {
         audioSource = gameObject.GetComponent<AudioSource>();
-        sumTime = 2.0f; //2 -> 1 -> 0
+        sumTime = 2.0f;         //2 -> 1 -> 0
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        sumTime -= Time.deltaTime; //カウントダウンする
+        sumTime -= Time.deltaTime;  //カウントダウンする
         seconds = (int)sumTime;
 
         if (seconds < 0)

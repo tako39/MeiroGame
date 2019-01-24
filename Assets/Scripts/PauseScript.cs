@@ -7,17 +7,17 @@ using UnityEngine.SceneManagement;
 //GameSceneのPauseButtonにアタッチ
 public class PauseScript : MonoBehaviour {
 
-    public GameObject pauseButton; //画像の切り替え用
+    public GameObject pauseButton;  //画像の切り替え用
     public GameObject startButton;
 
-    public GameObject ChangeDir; //向き変更ボタン
+    public GameObject ChangeDir;    //向き変更ボタン
 
-    public GameObject pauseScreen; //ポーズ画面
-    public GameObject endButton; //やめるボタン
+    public GameObject pauseScreen;  //ポーズ画面
+    public GameObject endButton;    //やめるボタン
 
 
-    private int clickCount;//何回押したか
-    public static bool pause; //一時停止しているか
+    private int clickCount;         //何回押したか
+    public static bool pause;       //一時停止しているか
 
     // Use this for initialization
     void Start () {
@@ -35,7 +35,8 @@ public class PauseScript : MonoBehaviour {
 
         if (clickCount % 2 == 1)
         {
-            pause = true; //ポーズ中の処理
+            pause = true;   //ポーズ中の処理
+
             pauseButton.SetActive(false);
             startButton.SetActive(true);
             ChangeDir.SetActive(false);
@@ -44,7 +45,8 @@ public class PauseScript : MonoBehaviour {
         }
         else
         {
-            pause = false; //プレイ中の処理
+            pause = false;  //プレイ中の処理
+
             pauseButton.SetActive(true);
             startButton.SetActive(false);
             ChangeDir.SetActive(true);
@@ -61,6 +63,6 @@ public class PauseScript : MonoBehaviour {
         PlayerPrefs.SetFloat("Seconds", 0.0f);
         PlayerPrefs.SetInt("Goalnum", 0);
 
-        SceneManager.LoadScene("SelectScene"); //Selectシーンへ
+        SceneManager.LoadScene("SelectScene");  //Selectシーンへ
     }
 }

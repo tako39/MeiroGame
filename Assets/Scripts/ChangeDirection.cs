@@ -6,7 +6,7 @@ using UnityEngine;
 //GameSceneの視点変更ボタンにアタッチ
 public class ChangeDirection : MonoBehaviour {
 
-    public static bool change = false;
+    public static bool change = false;  //向きの変更
 
 	// Use this for initialization
 	void Start () {
@@ -18,7 +18,7 @@ public class ChangeDirection : MonoBehaviour {
 		
 	}
 
-    public void ChangeDir_Click() //CameraControllerの向きを変える
+    public void ChangeDir_Click()       //CameraControllerの向きを変える
     {
         change = true;
     }
