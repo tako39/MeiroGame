@@ -1,28 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 
 //CountSceneのCountDirectorにアタッチ
 public class CountDirector : MonoBehaviour {
 
-    public AudioSource audioSource; //カウントダウン音
-
     private float sumTime;      //時間の計測
     private int seconds;        //カウントダウン用
 
-    public Text countText;      //カウントの表示
+    [SerializeField]
+    private Text countText;     //カウントの表示
+
+    bool isSceneChange;         //シーン遷移するか
 
     // Use this for initialization
-    void Start () {
-        audioSource = gameObject.GetComponent<AudioSource>();
+    private void Start () {
+        SoundManager.Instance.CountSound();  //カウントダウン音
         sumTime = 2.0f;         //2 -> 1 -> 0
+        isSceneChange = true;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
         sumTime -= Time.deltaTime;  //カウントダウンする
         seconds = (int)sumTime;
 
@@ -30,7 +29,11 @@ public class CountDirector : MonoBehaviour {
         {
             countText.text = "0";
 
-            SceneManager.LoadScene("GameScene");
+            if (isSceneChange)
+            {
+                isSceneChange = false;
+                StartCoroutine(GameManager.Instance.LoadSceneAsync("GameScene"));   //ゲームシーンへ
+            }
         }
         else if (seconds == 0)
         {

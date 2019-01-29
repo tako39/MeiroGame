@@ -1,31 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
 //GameSceneのPauseButtonにアタッチ
 public class PauseScript : MonoBehaviour {
 
-    public GameObject pauseButton;  //画像の切り替え用
-    public GameObject startButton;
+    [SerializeField]
+    private GameObject pauseButton;  //プレイ中に表示する画像
 
-    public GameObject ChangeDir;    //向き変更ボタン
+    [SerializeField]
+    private GameObject startButton;  //ポーズ中に表示する画像
 
-    public GameObject pauseScreen;  //ポーズ画面
-    public GameObject endButton;    //やめるボタン
+    [SerializeField]
+    private GameObject pauseScreen;  //ポーズ画面
 
-
-    private int clickCount;         //何回押したか
-    public static bool pause;       //一時停止しているか
+    [SerializeField]
+    private GameObject endButton;    //やめるボタン
+    
+    private int clickCount;          //何回押したか
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
         clickCount = 0;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
 		
 	}
 
@@ -35,21 +35,19 @@ public class PauseScript : MonoBehaviour {
 
         if (clickCount % 2 == 1)
         {
-            pause = true;   //ポーズ中の処理
+            GameManager.Instance.SetIsPause(true);
 
             pauseButton.SetActive(false);
             startButton.SetActive(true);
-            ChangeDir.SetActive(false);
             pauseScreen.SetActive(true);
             endButton.SetActive(true);
         }
         else
         {
-            pause = false;  //プレイ中の処理
+            GameManager.Instance.SetIsPause(false);
 
             pauseButton.SetActive(true);
             startButton.SetActive(false);
-            ChangeDir.SetActive(true);
             pauseScreen.SetActive(false);
             endButton.SetActive(false);
         }
@@ -57,7 +55,7 @@ public class PauseScript : MonoBehaviour {
 
     public void PushEndButton() //やめるボタンを押したとき
     {
-        pause = false;
+        GameManager.Instance.SetIsPause(false);
 
         PlayerPrefs.SetInt("Minutes", 0);
         PlayerPrefs.SetFloat("Seconds", 0.0f);

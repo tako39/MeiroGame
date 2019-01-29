@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
-
 
 //ResultSceneのResultDirectorにアタッチ(タイムアタックの結果表示)
 public class ResultDirector : MonoBehaviour {
 
-    public Text clearTimeText;  //クリア時間の表示
-    public Text bestTimeText;   //ベストタイム
+    [SerializeField]
+    private Text clearTimeText;  //クリア時間の表示
+
+    [SerializeField]
+    private Text bestTimeText;   //ベストタイムの表示
 
     private int bestTime;   //ベストタイム
 
@@ -17,8 +16,8 @@ public class ResultDirector : MonoBehaviour {
     private int seconds;    //秒
 
 	// Use this for initialization
-	void Start () {
-        int clearTime = PlayerController.totalTime; //PlayerControllerからクリアタイムを引き継ぐ
+	private void Start () {
+        int clearTime = GameManager.Instance.GetTotalTime();    //クリア時間を取得
 
         minutes = clearTime / 60;
         seconds = clearTime % 60;
@@ -41,10 +40,10 @@ public class ResultDirector : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
         if (Input.GetMouseButtonDown(0))    //押されたらSelectシーンへ
         {
-            SceneManager.LoadScene("SelectScene");
+            StartCoroutine(GameManager.Instance.LoadSceneAsync("SelectScene"));
         }
     }
 }

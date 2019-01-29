@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-
 
 //GameSceneのGameDirectorにアタッチ(迷路生成)
 public class GameDirector : MonoBehaviour {
@@ -9,16 +7,10 @@ public class GameDirector : MonoBehaviour {
     private const int MAX_HEIGHT = 30;  //迷路の最大の縦幅
     private const int MAX_WIDTH  = 30;  //迷路の最大の横幅
 
-    private int HEIGHT;             //迷路の縦幅
-    private int WIDTH;              //迷路の横幅
+    public static int HEIGHT;           //迷路の縦幅
+    public static int WIDTH;            //迷路の横幅
 
-    private static int[] mazeSize = new int[] { 13, 17, 21 };
-
-    private const int ROAD  = 0;    //通路
-    private const int WALL  = 1;    //壁
-    private const int START = 2;    //スタート地点
-    private const int GOAL  = 3;    //ゴール地点
-    private const int TRAP  = 4;    //罠
+    private int[] mazeSize = new int[] { 13, 17, 21 };   //迷路の大きさ
 
     private int[] dx = new int[]{ 1, 0, -1, 0 };    //上下左右4方向のx
     private int[] dy = new int[]{ 0, 1, 0, -1 };    //上下左右4方向のy
@@ -31,54 +23,49 @@ public class GameDirector : MonoBehaviour {
     public static int[] startPos = new int[2];  //スタート
     public static int[] goalPos  = new int[2];  //ゴール
 
-    public static int[] startPosCopy = new int[] { 1, 1 }; //PlayerController.cs用のコピー
-    public static bool isPlayerStart = false;    //プレイヤーの配置用
+    private void Awake () {
 
-    private int goalCount;          //PlayerControllerからゴール数を取得
-
-    // Use this for initialization
-    void Start () {
-        goalCount = PlayerController.goalNum;           //ゴールした数
-
-        mazeSize = GameManager.GetMazeSize();  //迷路の大きさを読み込む
+        mazeSize = GameManager.Instance.GetMazeSize();  //迷路の大きさを読み込む
 
         InitMaze();    //迷路の初期化
-        CreateMaze();    //迷路の生成
+        CreateMaze();  //迷路の生成
 
-        GoalSearch(startPos[0], startPos[1]);  //ランダムに決めたスタート地点から一番遠い点(p1)を求める
-        GoalSearch(goalPos[0], goalPos[1]);    //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
+        GoalSearch(startPos[0], startPos[1]);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
+        GoalSearch(goalPos[0], goalPos[1]);     //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
 
-        map[startPos[0], startPos[1]] = START;  //スタート地点
-        map[goalPos[0], goalPos[1]] = GOAL;     //ゴール地点
+        map[startPos[0], startPos[1]] = GameManager.START;  //スタート地点
+        map[goalPos[0], goalPos[1]] = GameManager.GOAL;     //ゴール地点
 
-        if (GameManager.GetIsNormalPlay()) SetTrap();            //迷路に罠を追加
+        if (GameManager.Instance.GetIsNormalPlay()) SetTrap();            //迷路に罠を追加
 
         DisplayMaze();     //迷路の表示
         
         //TestDisplay();     //マップやそのコストの確認用
-
-        startPosCopy = startPos;   //PlayerController.cs用
-        isPlayerStart = true;        //迷路を作り終えたらプレイヤーをスタート地点に置く
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Use this for initialization
+    private void Start() {
+
+    }
+
+    // Update is called once per frame
+    private void Update () {
         
 	}
 
-    void InitMaze() //迷路の初期化
+    private void InitMaze() //迷路の初期化
     {
-        if (GameManager.GetIsNormalPlay()) //通常プレイなら迷路の大きさはランダム
+        if (GameManager.Instance.GetIsNormalPlay()) //通常プレイなら迷路の大きさはランダム
         {
             HEIGHT = mazeSize[Random.Range(0, 3)];
             WIDTH  = mazeSize[Random.Range(0, 3)];
         }
         else //タイムアタックなら13->17->21
         {
-            if (goalCount < 3)
+            if (GameManager.Instance.GetGoalCount() < 3)
             {
-                HEIGHT = mazeSize[goalCount];
-                WIDTH  = mazeSize[goalCount];
+                HEIGHT = mazeSize[GameManager.Instance.GetGoalCount()];
+                WIDTH  = mazeSize[GameManager.Instance.GetGoalCount()];
             }
         }
 
@@ -86,15 +73,15 @@ public class GameDirector : MonoBehaviour {
         {
             for(int x = 0; x < WIDTH; x++)
             {
-                map[y, x] = WALL; //全て壁にする
+                map[y, x] = GameManager.WALL; //全て壁にする
             }
         }
     }
 
-    void CreateMaze()     //迷路の生成
+    private void CreateMaze()     //迷路の生成
     {
-        int x = MakeRandOdd(WIDTH  - 2);   //ランダムなスタート地点(奇数)を決める
-        int y = MakeRandOdd(HEIGHT - 2);
+        int y = MakeRandOdd(HEIGHT - 2);    //ランダムなスタート地点(奇数)を決める
+        int x = MakeRandOdd(WIDTH  - 2);
 
         startPos[0] = y;    //スタート地点としてコピー
         startPos[1] = x;
@@ -102,7 +89,7 @@ public class GameDirector : MonoBehaviour {
         DigMaze(y, x);    //(y, x)を始点として迷路を作る
     }
 
-    int MakeRandOdd(int mod)   //奇数の乱数を作る
+    private int MakeRandOdd(int mod)   //奇数の乱数を作る
     {
         int r = Random.Range(1, mod + 1);
         if (r % 2 == 0) r++;
@@ -110,18 +97,18 @@ public class GameDirector : MonoBehaviour {
         return r;
     }
 
-    void DigMaze(int y, int x)    //迷路の作成(穴掘り法)
+    private void DigMaze(int y, int x)    //迷路の作成(穴掘り法)
     {
         int d = Random.Range(0, 4);
         int dd = d;
 
         while (true)    //4方向に掘り進められなくなるまで
         {
-            int px = x + dx[d] * 2;     //二つ先を見る
-            int py = y + dy[d] * 2;
+            int py = y + dy[d] * 2;     //二つ先を見る
+            int px = x + dx[d] * 2;
 
             //掘り進められないとき方向を変える
-            if (px < 0 || py < 0 || px >= WIDTH || py >= HEIGHT || map[py, px] != WALL)
+            if (px < 0 || py < 0 || px >= WIDTH || py >= HEIGHT || map[py, px] != GameManager.WALL)
             {
                 d++;
                 if (d == 4) d = 0;
@@ -129,15 +116,15 @@ public class GameDirector : MonoBehaviour {
                 continue;
             }
 
-            map[y + dy[d], x + dx[d]] = ROAD;
-            map[py, px] = ROAD;
+            map[y + dy[d], x + dx[d]] = GameManager.ROAD;
+            map[py, px] = GameManager.ROAD;
 
-            DigMaze(py, px);          //(py, px)を起点として再帰
+            DigMaze(py, px);           //(py, px)を起点として再帰
             d = dd = Random.Range(0, 4);
         }
     }
 
-    void GoalSearch(int sy, int sx)    //ゴールの決定(幅優先探索で一番遠い点をゴールとする)
+    private void GoalSearch(int sy, int sx)    //ゴールの決定(幅優先探索で一番遠い点をゴールとする)
     {
         Queue<int> queY = new Queue<int>();
         Queue<int> queX = new Queue<int>();
@@ -173,7 +160,7 @@ public class GameDirector : MonoBehaviour {
 
                 if (0 <= ny && ny < HEIGHT && 0 <= nx && nx < WIDTH)
                 {
-                    if (map[ny, nx] != WALL && dist[ny, nx] == INF) //通路で且つ未訪問のとき
+                    if (map[ny, nx] != GameManager.WALL && dist[ny, nx] == INF) //通路で且つ未訪問のとき
                     {
                         queY.Enqueue(ny);
                         queX.Enqueue(nx);
@@ -193,7 +180,7 @@ public class GameDirector : MonoBehaviour {
         goalPos[1] = tmpGoal[1];
     }
 
-    void SetTrap()  //迷路に１つ罠を追加
+    private void SetTrap()  //迷路に１つ罠を追加
     {
         while (true)
         {
@@ -202,42 +189,42 @@ public class GameDirector : MonoBehaviour {
             int randomY = Random.Range(1, WIDTH  - 2);
 
             //もし通路なら罠に変更する
-            if(map[randomY, randomX] == ROAD)
+            if(map[randomY, randomX] == GameManager.ROAD)
             {
-                map[randomY, randomX] = TRAP;
+                map[randomY, randomX] = GameManager.TRAP;
                 break;
             }
         }
     }
 
-    void DisplayMaze()     //迷路を表示する
+    private void DisplayMaze()     //迷路を表示する
     {
         for (int y = 0; y < HEIGHT; y++)
         {
             for(int x = 0; x < WIDTH; x++)
             {
-                if(map[y, x] == START)          //スタートの床
+                if(map[y, x] == GameManager.START)          //スタートの床
                 {
                     GameObject start = (GameObject)Resources.Load("Start");
                     Instantiate(start, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
-                else if (map[y , x] == GOAL)    //ゴールの床
+                else if (map[y , x] == GameManager.GOAL)    //ゴールの床
                 {
                     GameObject goal = (GameObject)Resources.Load("Goal");
                     Instantiate(goal, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
-                else if(map[y, x] == TRAP)      //罠の床
+                else if(map[y, x] == GameManager.TRAP)      //罠の床
                 {
                     GameObject trap = (GameObject)Resources.Load("Trap");
                     Instantiate(trap, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
-                else                            //その他の床
+                else                                        //その他の床
                 {
                     GameObject road = (GameObject)Resources.Load("Road");
                     Instantiate(road, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
 
-                if (map[y, x] == WALL)          //壁
+                if (map[y, x] == GameManager.WALL)          //壁
                 {
                     GameObject wall = (GameObject)Resources.Load("Wall");
                     Instantiate(wall, new Vector3(x, -y, 0), Quaternion.identity);
@@ -246,7 +233,7 @@ public class GameDirector : MonoBehaviour {
         }
     }
 
-    void TestDisplay()     //確認用
+    private void TestDisplay()     //確認用
     {
         for(int y = HEIGHT - 1; y >= 0; y--)
         {

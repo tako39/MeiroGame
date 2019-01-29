@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 //SelectSceneの初期化ボタンにアタッチ
 public class Initialization : MonoBehaviour {
     
-    public GameObject initial;
-    private int pushCount;
+    [SerializeField]
+    private GameObject initial;
+
+    private int pushCount;  //押された回数
 
 	// Use this for initialization
-	void Start () {
+	private void Start () {
         pushCount = 0;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
         
     }
 

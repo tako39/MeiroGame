@@ -1,14 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //StartSceneのStartPlayerにアタッチ(タイトル画面のプレイヤー)
 public class StartPlayer : MonoBehaviour {
 
     private int[] direct = new int[] { -1, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 0, 0 };   //0:右 1:上 2:左 3:下
-    private int dNum;                   //directの番号
+    private int dNum;   //directの番号
 
-    //回転
     private Vector3 rotatePoint = Vector3.zero; //回転中心
     private Vector3 rotateAxis = Vector3.zero;  //回転軸
 
@@ -19,14 +17,14 @@ public class StartPlayer : MonoBehaviour {
     private int[] startPos = new int[] {5, 1};  //最初の位置
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
         dNum = -1;
         cubeSizeHalf = transform.localScale.x / 2.0f;
         transform.position = new Vector3(startPos[1], 0.0f, startPos[0]);
     }
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
         if (isRotate) return;   //回転中は何もしない
 
         dNum++;
@@ -45,26 +43,26 @@ public class StartPlayer : MonoBehaviour {
     {
         if (direct[dNum] == 0)  //右
         {
-            rotatePoint = transform.position + new Vector3(cubeSizeHalf, -cubeSizeHalf, 0f);
-            rotateAxis = new Vector3(0, 0, -1);
+            rotatePoint = transform.position + new Vector3(cubeSizeHalf, -cubeSizeHalf, 0.0f);
+            rotateAxis = new Vector3(0.0f, 0.0f, -1.0f);
         }
 
         if (direct[dNum] == 1)  //上
         {
-            rotatePoint = transform.position + new Vector3(0f, -cubeSizeHalf, cubeSizeHalf);
-            rotateAxis = new Vector3(1, 0, 0);
+            rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, cubeSizeHalf);
+            rotateAxis = new Vector3(1.0f, 0.0f, 0.0f);
         }
 
         if (direct[dNum] == 2)  //左
         {
-            rotatePoint = transform.position + new Vector3(-cubeSizeHalf, -cubeSizeHalf, 0f);
-            rotateAxis = new Vector3(0, 0, 1);
+            rotatePoint = transform.position + new Vector3(-cubeSizeHalf, -cubeSizeHalf, 0.0f);
+            rotateAxis = new Vector3(0.0f, 0.0f, 1.0f);
         }
 
         if (direct[dNum] == 3)  //下
         {
-            rotatePoint = transform.position + new Vector3(0f, -cubeSizeHalf, -cubeSizeHalf);
-            rotateAxis = new Vector3(-1, 0, 0);
+            rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, -cubeSizeHalf);
+            rotateAxis = new Vector3(-1.0f, 0.0f, 0.0f);
         }
     }
 
