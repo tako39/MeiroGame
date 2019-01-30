@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     private int[] mazeSize = new int[3];   //迷路の大きさ
+    private int gameType = TIME_ATTACK;    //ゲームの種類
 
-    private bool isNormalPlay = false;     //通常プレイかどうか
     private int playerHp = 100;            //プレイヤーのHP
 
     private bool isPause = false;          //ポーズ中かどうか
@@ -56,21 +56,31 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(Instance);
     }
 
-    public void SetMazeSize(int difficulty)  //難易度に応じた迷路の設定
+    public void SetGameType(int type)        //ゲームの種類をセット
     {
-        if (difficulty == EASY)
+        gameType = type;
+    }
+
+    public int GetGameType()                 //ゲームの種類を取得
+    {
+        return gameType;
+    }
+
+    public void SetMazeSize()                //難易度に応じた迷路の設定
+    {
+        if (gameType == EASY)
         {
             mazeSize = new int[] { 11, 13, 15 };
         }
-        else if (difficulty == NORMAL)
+        else if (gameType == NORMAL)
         {
             mazeSize = new int[] { 15, 17, 19 };
         }
-        else if (difficulty == DIFFICULT)
+        else if (gameType == DIFFICULT)
         {
             mazeSize = new int[] { 19, 21, 23 };
         }
-        else if (difficulty == TIME_ATTACK)
+        else if (gameType == TIME_ATTACK)
         {
             mazeSize = new int[] { 13, 17, 21 };
         }
@@ -94,16 +104,6 @@ public class GameManager : MonoBehaviour
     public void PlayerDamaged(int amount)    //ダメージを受ける
     {
         playerHp -= amount;
-    }
-
-    public void SetIsNormalPlay(bool normalPlay)   //通常プレイかどうかをセット
-    {
-        isNormalPlay = normalPlay;
-    }
-
-    public bool GetIsNormalPlay()                  //通常プレイかどうかを取得
-    {
-        return isNormalPlay;
     }
 
     public void SetIsPause(bool pause)   //ポーズ中かどうかをセット

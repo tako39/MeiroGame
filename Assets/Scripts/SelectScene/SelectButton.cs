@@ -33,7 +33,6 @@ public class SelectButton : MonoBehaviour {
     public void PushNormalPlay()  //通常プレイを押したときの動作
     {
         SoundManager.Instance.ClickSound();
-        GameManager.Instance.SetIsNormalPlay(true);
 
         normalPlay.SetActive(false);
         difficultyDisplay.SetActive(true);  //難易度選択だけを表示する
@@ -46,7 +45,8 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetMazeSize(GameManager.EASY);
+        GameManager.Instance.SetGameType(GameManager.EASY);
+        GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
     }
@@ -55,7 +55,8 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetMazeSize(GameManager.NORMAL);
+        GameManager.Instance.SetGameType(GameManager.NORMAL);
+        GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
     }
@@ -64,7 +65,8 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetMazeSize(GameManager.DIFFICULT);
+        GameManager.Instance.SetGameType(GameManager.DIFFICULT);
+        GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
     }
@@ -73,9 +75,8 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetIsNormalPlay(false);
-
-        GameManager.Instance.SetMazeSize(GameManager.TIME_ATTACK);
+        GameManager.Instance.SetGameType(GameManager.TIME_ATTACK);
+        GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
     }

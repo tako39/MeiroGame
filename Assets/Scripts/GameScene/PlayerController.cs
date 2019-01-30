@@ -46,18 +46,18 @@ public class PlayerController : MonoBehaviour {
     {
         isGoal = false;
 
-        if (GameManager.Instance.GetIsNormalPlay()) //通常プレイなら
+        if(GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) //タイムアタックなら
+        {
+            timerText.enabled = true;   //時間経過を表示する
+
+            hpDisplay.SetActive(false); //hpバーを非表示にする
+        }
+        else //通常プレイなら
         {
             timerText.enabled = false;  //時間経過を表示しない
 
             hpDisplay.SetActive(true);  //hpバーを表示する
             hpBar.SetHealth(GameManager.Instance.GetPlayerHp());  //現在のhpを代入
-        }
-        else   //タイムアタックなら
-        {
-            timerText.enabled = true;   //時間経過を表示する
-
-            hpDisplay.SetActive(false); //hpバーを非表示にする
         }
 
         minutes = PlayerPrefs.GetInt("Minutes", 0);
@@ -77,17 +77,17 @@ public class PlayerController : MonoBehaviour {
 
         if (GameManager.Instance.GetIsPause()) return;   //ポーズ中なら何もしない
 
-        TimeCount();  //経過時間の処理
+        TimeCount();    //経過時間の処理
 
         if (isRotate) return; //回転中は何もしない
 
-        GoalCheck();  //ゴール処理
+        GoalCheck();    //ゴール処理
 
-        TrapCheck();  //罠ダメージ
+        TrapCheck();    //罠ダメージ
 
         PlayerHpCheck();    //プレイヤーが生きているか
 
-        WallSearch(); //壁を探す
+        WallSearch();   //壁を探す
 
         FlickScreen();  //フリックしたときの動作
 
@@ -98,16 +98,16 @@ public class PlayerController : MonoBehaviour {
         StartCoroutine(MoveCube()); //ここで回転を始める
     }
 
-    private void Firstpos() // 最初の位置の設定
+    private void Firstpos()     // 最初の位置の設定
     {
         nowPosition = GameDirector.startPos;
 
         transform.position = new Vector3(nowPosition[1], -nowPosition[0], 0.0f); //スタート位置に移動
     }
 
-    private void TimeCount() //経過時間
+    private void TimeCount()    //経過時間
     {
-        if (!GameManager.Instance.GetIsNormalPlay()) //タイムアタックの場合
+        if (GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) //タイムアタックの場合
         {
             if (!isGoal) seconds += Time.deltaTime;
 
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void GoalCheck() //ゴール時の処理
+    private void GoalCheck()    //ゴール時の処理
     {
         if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.GOAL && !isGoal) 
         {
@@ -137,14 +137,15 @@ public class PlayerController : MonoBehaviour {
             GameManager.Instance.AddGoalCount();    //ゴールした数を増やす
 
             //タイムアタックで3回ゴールした時はResultシーンへ
-            if (!GameManager.Instance.GetIsNormalPlay() && GameManager.Instance.GetGoalCount() >= 3)
+            if ((GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) && 
+                (GameManager.Instance.GetGoalCount() >= 3))
             {
                 GameManager.Instance.SetTotalTime(minutes * 60 + (int)seconds);     //クリア時間を保存
 
                 PlayerPrefs.SetInt("Minutes", 0);
                 PlayerPrefs.SetFloat("Seconds", 0.0f);
 
-                StartCoroutine(GameManager.Instance.LoadSceneAsync("ResultScene"));
+                StartCoroutine(GameManager.Instance.LoadSceneAsync("TimeAttackEndScene"));
             }
             else
             {
@@ -153,7 +154,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void TrapCheck()
+    private void TrapCheck()    //罠に乗った時の処理
     {
         if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.TRAP)
         {
@@ -170,15 +171,15 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void PlayerHpCheck()
+    private void PlayerHpCheck()    //プレイヤーの生存処理
     {
         if (GameManager.Instance.GetPlayerHp() <= GameManager.minPlayerHp)
         {
-            StartCoroutine(GameManager.Instance.LoadSceneAsync("GameOverScene"));   //ゲームオーバー
+            StartCoroutine(GameManager.Instance.LoadSceneAsync("NormalEndScene"));  //ゲーム終了
         }
     }
 
-    private void WallSearch() //現在地から上下左右の壁を探す
+    private void WallSearch()       //現在地から上下左右の壁を探す
     {
         for (int i = 0; i < 4; i++)
         {
@@ -197,7 +198,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void FlickScreen() //フリック入力での移動
+    private void FlickScreen()      //フリック入力での移動
     {
         for (int i = 0; i < 4; i++)
         {
@@ -207,15 +208,15 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Mouse0)) //押したとき
         {
             StartPos = new Vector3(Input.mousePosition.x,
-                                        Input.mousePosition.y,
-                                        Input.mousePosition.z);
+                                   Input.mousePosition.y,
+                                   Input.mousePosition.z);
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))   //離したとき
         {
             EndPos = new Vector3(Input.mousePosition.x,
-                                      Input.mousePosition.y,
-                                      Input.mousePosition.z);
+                                 Input.mousePosition.y,
+                                 Input.mousePosition.z);
             GetDirection();
         }
     }
@@ -249,7 +250,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void InputKey() //入力を受け付ける
+    private void InputKey()     //入力を受け付ける
     {
         //入力に応じて回転する位置と軸を決める
         if ((Input.GetKeyDown(KeyCode.RightArrow) || moveDirect[0]) && isMovable[0]) //右
@@ -278,7 +279,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private IEnumerator MoveCube() //回転処理
+    private IEnumerator MoveCube()  //回転処理
     {
         SoundManager.Instance.RotateSound(); //回転音
         isRotate = true;         //回転中

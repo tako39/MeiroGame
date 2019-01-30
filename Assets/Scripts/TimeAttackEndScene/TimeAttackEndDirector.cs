@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-//ResultSceneのResultDirectorにアタッチ(タイムアタックの結果表示)
-public class ResultDirector : MonoBehaviour {
+//タイムアタックの結果表示
+public class TimeAttackEndDirector : MonoBehaviour {
 
     [SerializeField]
     private Text clearTimeText;  //クリア時間の表示
@@ -10,21 +10,16 @@ public class ResultDirector : MonoBehaviour {
     [SerializeField]
     private Text bestTimeText;   //ベストタイムの表示
 
-    private int bestTime;   //ベストタイム
-
-    private int minutes;    //分
-    private int seconds;    //秒
-
 	// Use this for initialization
 	private void Start () {
         int clearTime = GameManager.Instance.GetTotalTime();    //クリア時間を取得
 
-        minutes = clearTime / 60;
-        seconds = clearTime % 60;
+        int minutes = clearTime / 60;   //分
+        int seconds = clearTime % 60;   //秒
         clearTimeText.text = "クリアジカン：" + minutes.ToString("00") + ":" + seconds.ToString("00");
 
         //今までのベストタイムを求める
-        bestTime = PlayerPrefs.GetInt("BestTime", (int)1e5);
+        int bestTime = PlayerPrefs.GetInt("BestTime", (int)1e9);
         if(bestTime > clearTime)
         {
             PlayerPrefs.SetInt("BestTime", clearTime);

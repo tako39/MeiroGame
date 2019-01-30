@@ -479,7 +479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.20723514, g: 0.7830189, b: 0.040628344, a: 1}
+  m_Color: {r: 0.12810326, g: 0.5660378, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -637,7 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.72156864, g: 1, b: 0.9719316, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.90140843, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 1339301111}
   - component: {fileID: 1339301110}
   m_Layer: 0
-  m_Name: ResultDirector
+  m_Name: TimeAttackEndDirector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

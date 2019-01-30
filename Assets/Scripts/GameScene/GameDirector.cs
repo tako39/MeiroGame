@@ -36,7 +36,10 @@ public class GameDirector : MonoBehaviour {
         map[startPos[0], startPos[1]] = GameManager.START;  //スタート地点
         map[goalPos[0], goalPos[1]] = GameManager.GOAL;     //ゴール地点
 
-        if (GameManager.Instance.GetIsNormalPlay()) SetTrap();            //迷路に罠を追加
+        if (GameManager.Instance.GetGameType() != GameManager.TIME_ATTACK)
+        {
+            SetTrap();     //通常プレイのときは迷路に罠を追加
+        }
 
         DisplayMaze();     //迷路の表示
         
@@ -55,18 +58,18 @@ public class GameDirector : MonoBehaviour {
 
     private void InitMaze() //迷路の初期化
     {
-        if (GameManager.Instance.GetIsNormalPlay()) //通常プレイなら迷路の大きさはランダム
-        {
-            HEIGHT = mazeSize[Random.Range(0, 3)];
-            WIDTH  = mazeSize[Random.Range(0, 3)];
-        }
-        else //タイムアタックなら13->17->21
+        if (GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) //タイムアタックなら13->17->21
         {
             if (GameManager.Instance.GetGoalCount() < 3)
             {
                 HEIGHT = mazeSize[GameManager.Instance.GetGoalCount()];
                 WIDTH  = mazeSize[GameManager.Instance.GetGoalCount()];
             }
+        }
+        else //通常プレイなら迷路の大きさはランダム
+        {
+            HEIGHT = mazeSize[Random.Range(0, 3)];
+            WIDTH  = mazeSize[Random.Range(0, 3)];
         }
 
         for (int y = 0; y < HEIGHT; y++)
@@ -86,7 +89,7 @@ public class GameDirector : MonoBehaviour {
         startPos[0] = y;    //スタート地点としてコピー
         startPos[1] = x;
 
-        DigMaze(y, x);    //(y, x)を始点として迷路を作る
+        DigMaze(y, x);      //(y, x)を始点として迷路を作る
     }
 
     private int MakeRandOdd(int mod)   //奇数の乱数を作る

@@ -18,9 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GameScene.unity
     guid: 8380b26e95a848b4c9e9f12c7b8f77e7
   - enabled: 1
-    path: Assets/Scenes/ResultScene.unity
+    path: Assets/Scenes/TimeAttackEndScene.unity
     guid: 70606a60862a39b4cb9058ac09b11195
   - enabled: 1
-    path: Assets/Scenes/GameOverScene.unity
+    path: Assets/Scenes/NormalEndScene.unity
     guid: 6ae10fdb48f66684a85628eb1d8881cd
   m_configObjects: {}

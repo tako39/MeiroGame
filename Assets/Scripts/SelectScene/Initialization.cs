@@ -31,10 +31,7 @@ public class Initialization : MonoBehaviour {
 
     public void PushYesButton() //はいを押したとき
     {
-        PlayerPrefs.DeleteKey("Minutes");
-        PlayerPrefs.DeleteKey("Seconds");
-        PlayerPrefs.DeleteKey("Goalnum");
-        PlayerPrefs.DeleteKey("BestTime");
+        PlayerPrefs.DeleteAll();
         initial.SetActive(false);
     }
 
