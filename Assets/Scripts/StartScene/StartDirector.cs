@@ -45,15 +45,14 @@ public class StartDirector : MonoBehaviour {
                     GameObject goal = (GameObject)Resources.Load("Goal_s");
                     Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                 }
-                else                                        //それ以外(壁がある所にも床を作る)
+                else if(map[z, x] == GameManager.ROAD)      //通路の床
                 {
                     GameObject road = (GameObject)Resources.Load("Road_s");
                     Instantiate(road, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                 }
-
-                if (map[z, x] == GameManager.WALL)          //壁
+                else if (map[z, x] == GameManager.WALL)     //壁
                 {
-                    GameObject wall = (GameObject)Resources.Load("Wall");
+                    GameObject wall = (GameObject)Resources.Load("Wall_s");
                     Instantiate(wall, new Vector3(x, 0.0f, -z + 10), Quaternion.identity);
                 }
             }

@@ -221,16 +221,15 @@ public class GameDirector : MonoBehaviour {
                     GameObject trap = (GameObject)Resources.Load("Trap");
                     Instantiate(trap, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
-                else                                        //その他の床
+                else if(map[y, x] == GameManager.ROAD)      //通路の床
                 {
                     GameObject road = (GameObject)Resources.Load("Road");
                     Instantiate(road, new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
-
-                if (map[y, x] == GameManager.WALL)          //壁
+                else if (map[y, x] == GameManager.WALL)     //壁
                 {
                     GameObject wall = (GameObject)Resources.Load("Wall");
-                    Instantiate(wall, new Vector3(x, -y, 0), Quaternion.identity);
+                    Instantiate(wall, new Vector3(x, -y, 0.0f), Quaternion.identity);
                 }
             }
         }
