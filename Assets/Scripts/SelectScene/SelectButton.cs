@@ -34,8 +34,8 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
+        difficultyDisplay.SetActive(true);
         normalPlay.SetActive(false);
-        difficultyDisplay.SetActive(true);  //難易度選択だけを表示する
         timeAttack.SetActive(false);
         description.SetActive(false);
         operation.SetActive(false);
@@ -85,21 +85,41 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
         desGuideDisplay.SetActive(true);
+
+        normalPlay.SetActive(false);
+        timeAttack.SetActive(false);
+        description.SetActive(false);
+        operation.SetActive(false);
     }
 
     public void PushOperation()   //操作説明を押したときの動作
     {
         SoundManager.Instance.ClickSound();
         opeGuideDisplay.SetActive(true);
+
+        normalPlay.SetActive(false);
+        timeAttack.SetActive(false);
+        description.SetActive(false);
+        operation.SetActive(false);
     }
 
     public void PushDesClose()    //ルール説明の×ボタンを押したときの動作
     {
         desGuideDisplay.SetActive(false);
+
+        normalPlay.SetActive(true);
+        timeAttack.SetActive(true);
+        description.SetActive(true);
+        operation.SetActive(true);
     }
 
     public void PushOpeClose()    //操作説明の×ボタンを押したときの動作
     {
         opeGuideDisplay.SetActive(false);
+
+        normalPlay.SetActive(true);
+        timeAttack.SetActive(true);
+        description.SetActive(true);
+        operation.SetActive(true);
     }
 }
