@@ -23,6 +23,8 @@ public class GameDirector : MonoBehaviour {
     public static int[] startPos = new int[2];  //スタート
     public static int[] goalPos  = new int[2];  //ゴール
 
+    public static GameObject[,] gameObject = new GameObject[MAX_HEIGHT, MAX_WIDTH];
+
     private void Awake () {
 
         mazeSize = GameManager.Instance.GetMazeSize();  //迷路の大きさを読み込む
@@ -38,17 +40,16 @@ public class GameDirector : MonoBehaviour {
 
         if (GameManager.Instance.GetGameType() != GameManager.TIME_ATTACK)
         {
-            SetTrap();     //通常プレイのときは迷路に罠を追加
+            SetTrap();      //通常プレイのときは迷路に罠を追加
+            SetRecovery();  //回復床も追加
         }
-
-        DisplayMaze();     //迷路の表示
-        
-        //TestDisplay();     //マップやそのコストの確認用
     }
 
     // Use this for initialization
     private void Start() {
+        DisplayMaze();     //迷路の表示
 
+        //TestDisplay();     //マップやそのコストの確認用
     }
 
     // Update is called once per frame
@@ -200,36 +201,58 @@ public class GameDirector : MonoBehaviour {
         }
     }
 
+    private void SetRecovery()  //迷路に１つ回復床を追加
+    {
+        while (true)
+        {
+            //ランダムにxとyを決める(0 と HEIGHT - 1 は壁)
+            int randomX = Random.Range(1, HEIGHT - 2);
+            int randomY = Random.Range(1, WIDTH - 2);
+
+            //もし通路なら回復床に変更する
+            if (map[randomY, randomX] == GameManager.ROAD)
+            {
+                map[randomY, randomX] = GameManager.RECOVERY;
+                break;
+            }
+        }
+    }
+
     private void DisplayMaze()     //迷路を表示する
     {
         for (int y = 0; y < HEIGHT; y++)
         {
             for(int x = 0; x < WIDTH; x++)
             {
-                if(map[y, x] == GameManager.START)          //スタートの床
+                if (map[y, x] == GameManager.ROAD)          //通路の床
                 {
-                    GameObject start = (GameObject)Resources.Load("Start");
-                    Instantiate(start, new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if (map[y , x] == GameManager.GOAL)    //ゴールの床
-                {
-                    GameObject goal = (GameObject)Resources.Load("Goal");
-                    Instantiate(goal, new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if(map[y, x] == GameManager.TRAP)      //罠の床
-                {
-                    GameObject trap = (GameObject)Resources.Load("Trap");
-                    Instantiate(trap, new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if(map[y, x] == GameManager.ROAD)      //通路の床
-                {
-                    GameObject road = (GameObject)Resources.Load("Road");
-                    Instantiate(road, new Vector3(x, -y, 0.5f), Quaternion.identity);
+                    gameObject[y, x] = (GameObject)Resources.Load("Road");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
                 else if (map[y, x] == GameManager.WALL)     //壁
                 {
-                    GameObject wall = (GameObject)Resources.Load("Wall");
-                    Instantiate(wall, new Vector3(x, -y, 0.0f), Quaternion.identity);
+                    gameObject[y, x] = (GameObject)Resources.Load("Wall");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.0f), Quaternion.identity);
+                }
+                else if (map[y, x] == GameManager.START)    //スタートの床
+                {
+                    gameObject[y, x] = (GameObject)Resources.Load("Start");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                }
+                else if (map[y , x] == GameManager.GOAL)    //ゴールの床
+                {
+                    gameObject[y, x] = (GameObject)Resources.Load("Goal");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                }
+                else if(map[y, x] == GameManager.TRAP)      //罠の床
+                {
+                    gameObject[y, x] = (GameObject)Resources.Load("Trap");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                }
+                else if(map[y, x] == GameManager.RECOVERY)  //回復床
+                {
+                    gameObject[y, x] = (GameObject)Resources.Load("Recovery");
+                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                 }
             }
         }

@@ -16,7 +16,7 @@ public class TimeAttackEndDirector : MonoBehaviour {
 
         int minutes = clearTime / 60;   //分
         int seconds = clearTime % 60;   //秒
-        clearTimeText.text = "クリアジカン：" + minutes.ToString("00") + ":" + seconds.ToString("00");
+        clearTimeText.text = "クリア時間：" + minutes.ToString("00") + ":" + seconds.ToString("00");
 
         //今までのベストタイムを求める
         int bestTime = PlayerPrefs.GetInt("BestTime", (int)1e9);
@@ -24,13 +24,13 @@ public class TimeAttackEndDirector : MonoBehaviour {
         {
             PlayerPrefs.SetInt("BestTime", clearTime);
 
-            bestTimeText.text = "ジコベスト：" + minutes.ToString("00") + ":" + seconds.ToString("00");
+            bestTimeText.text = "自己ベスト：" + minutes.ToString("00") + ":" + seconds.ToString("00");
         }
         else
         {
             int min = bestTime / 60;
             int sec = bestTime % 60;
-            bestTimeText.text = "ジコベスト：" + min.ToString("00") + ":" + sec.ToString("00");
+            bestTimeText.text = "自己ベスト：" + min.ToString("00") + ":" + sec.ToString("00");
         }
 	}
 	

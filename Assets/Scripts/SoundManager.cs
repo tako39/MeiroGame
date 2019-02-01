@@ -9,16 +9,22 @@ public class SoundManager : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField]
-    private AudioClip startSound;
+    private AudioClip startSound;       //スタート音
 
     [SerializeField]
-    private AudioClip clickSound;
+    private AudioClip clickSound;       //クリック音
 
     [SerializeField]
-    private AudioClip rotateSound;
+    private AudioClip rotateSound;      //回転音
 
     [SerializeField]
-    private AudioClip countSound;
+    private AudioClip countSound;       //カウントダウン音
+
+    [SerializeField]
+    private AudioClip damageSound;      //ダメージ音
+
+    [SerializeField]
+    private AudioClip recoverySound;    //回復音
 
     private void Awake()
     {
@@ -36,25 +42,31 @@ public class SoundManager : MonoBehaviour
 
     public void StartSound()
     {
-        audioSource.clip = startSound;
-        audioSource.Play();
+        audioSource.PlayOneShot(startSound);
     }
 
     public void ClickSound()
     {
-        audioSource.clip = clickSound;
-        audioSource.Play();
+        audioSource.PlayOneShot(clickSound);
     }
 
     public void RotateSound()
     {
-        audioSource.clip = rotateSound;
-        audioSource.Play();
+        audioSource.PlayOneShot(rotateSound);
     }
 
     public void CountSound()
     {
-        audioSource.clip = countSound;
-        audioSource.Play();
+        audioSource.PlayOneShot(countSound);
+    }
+
+    public void DamageSound()
+    {
+        audioSource.PlayOneShot(damageSound);
+    }
+
+    public void RecoverySound()
+    {
+        audioSource.PlayOneShot(recoverySound);
     }
 }

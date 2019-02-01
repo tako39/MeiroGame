@@ -39,8 +39,8 @@ public class NormalEndDirector : MonoBehaviour
             PlayerPrefs.SetInt(bestCountStr, nowCount);
         }
 
-        nowCountText.text  = "クリアカイスウ："   + nowCount.ToString()  + "カイ";
-        bestCountText.text = "サイコウカイスウ：" + bestCount.ToString() + "カイ";
+        nowCountText.text  = "今回の記録："   + nowCount.ToString()  + "回";
+        bestCountText.text = "最高記録：" + bestCount.ToString() + "回";
     }
 
     // Update is called once per frame

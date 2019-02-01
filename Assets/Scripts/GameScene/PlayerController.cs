@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour {
     private Healthbar hpBar;        //体力
 
     bool firstOnTrap = true;        //始めて罠の床に乗ったか
+    bool firstOnRecovery = true;    //始めて回復床に乗ったか
 
     private void Awake()
     {
@@ -77,21 +78,23 @@ public class PlayerController : MonoBehaviour {
 
         if (GameManager.Instance.GetIsPause()) return;   //ポーズ中なら何もしない
 
-        TimeCount();    //経過時間の処理
+        TimeCount();        //経過時間の処理
 
         if (isRotate) return; //回転中は何もしない
 
-        GoalCheck();    //ゴール処理
+        GoalCheck();        //ゴール処理
 
-        TrapCheck();    //罠ダメージ
+        TrapCheck();        //罠ダメージ
+
+        RecoveryCheck();    //回復処理
 
         PlayerHpCheck();    //プレイヤーが生きているか
 
-        WallSearch();   //壁を探す
+        WallSearch();       //壁を探す
 
-        FlickScreen();  //フリックしたときの動作
+        FlickScreen();      //フリックしたときの動作
 
-        InputKey();     //入力に対する処理
+        InputKey();         //入力に対する処理
 
         if (rotatePoint == Vector3.zero) return; //入力がない場合次の呼び出しを行わない
 
@@ -160,14 +163,35 @@ public class PlayerController : MonoBehaviour {
         {
             if (firstOnTrap)    //罠に乗った瞬間
             {
+                SoundManager.Instance.DamageSound();        //ダメージ音
                 hpBar.TakeDamage(GameManager.trapDamage);   //ダメージを食らう
-                GameManager.Instance.PlayerDamaged(GameManager.trapDamage);
+                GameManager.Instance.PlayerDamaged();
             }
             firstOnTrap = false;
         }
         else
         {
             firstOnTrap = true;
+        }
+    }
+
+    private void RecoveryCheck()
+    {
+        if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.RECOVERY)
+        {
+            if (firstOnRecovery)    //回復床に乗った瞬間
+            {
+                SoundManager.Instance.RecoverySound();         //回復音
+                hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
+                GameManager.Instance.PlayerRecovered();
+
+                GameDirector.map[nowPosition[0], nowPosition[1]] = GameManager.ROAD;
+            }
+            firstOnRecovery = false;
+        }
+        else
+        {
+            firstOnRecovery = true;
         }
     }
 

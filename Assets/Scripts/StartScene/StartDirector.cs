@@ -35,17 +35,7 @@ public class StartDirector : MonoBehaviour {
         {
             for (int x = 0; x < WIDTH; x++)
             {
-                if (map[z, x] == GameManager.START)         //スタートの床
-                {
-                    GameObject start = (GameObject)Resources.Load("Start_s");
-                    Instantiate(start, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
-                }
-                else if (map[z, x] == GameManager.GOAL)     //ゴールの床
-                {
-                    GameObject goal = (GameObject)Resources.Load("Goal_s");
-                    Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
-                }
-                else if(map[z, x] == GameManager.ROAD)      //通路の床
+                if (map[z, x] == GameManager.ROAD)          //通路の床
                 {
                     GameObject road = (GameObject)Resources.Load("Road_s");
                     Instantiate(road, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
@@ -54,6 +44,16 @@ public class StartDirector : MonoBehaviour {
                 {
                     GameObject wall = (GameObject)Resources.Load("Wall_s");
                     Instantiate(wall, new Vector3(x, 0.0f, -z + 10), Quaternion.identity);
+                }
+                else if (map[z, x] == GameManager.START)    //スタートの床
+                {
+                    GameObject start = (GameObject)Resources.Load("Start_s");
+                    Instantiate(start, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
+                }
+                else if (map[z, x] == GameManager.GOAL)     //ゴールの床
+                {
+                    GameObject goal = (GameObject)Resources.Load("Goal_s");
+                    Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                 }
             }
         }
