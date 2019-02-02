@@ -1,22 +1,23 @@
 # MeiroGame
 Unityを用いたAndroidで動作する迷路ゲーム
 
+
 プレイの仕方
 ・BuildAndRunを押して実行する
 または
 ・Buildしてapkファイルを生成する。そのapkファイルをandroid端末にインストールして実行する。
+または
+・UnityRoomにWebGL版をアップしたのでそれをプレイする。
+リンク：
+https://unityroom.com/games/meirogame_by_tako
+
 
 制作人数：一人
-制作期間：2018年 8月下旬から9月下旬（初期制作）, 2019年 1月下旬~（改善）
+制作期間：2018年 8月下旬から9月下旬（初期制作）, 2019年 1月下旬（改善）
 制作環境：Unity(Version2018.3.0f2),VisualStudio2015ExpressforWindowsDesktop
 使用言語：Unity(C#)
 動作環境：Androidを想定
 
-使用した音楽素材：
-https://maoudamashii.jokersounds.com/music_se.html
-
-プレイ動画（提出用）：
-https://www.youtube.com/watch?v=p1IsVHD2nY8
 
 操作方法：
 //変更前
@@ -28,9 +29,11 @@ https://www.youtube.com/watch?v=p1IsVHD2nY8
 通常プレイは、体力が０以上である限りずっとプレイできる。体力は罠の床を踏むことで減少する。
 タイムアタックは難易度順（簡単、普通、難しい）に迷路を解き、そのタイムを競う。
 
+
 迷路生成について：
 迷路はランダムに自動生成される。
 アルゴリズムは穴掘り法を使用していて、幅優先探索によってスタートとゴールの距離を最も遠くしている。
+
 
 制作のきっかけ：
 自動生成迷路に興味を持ち、習得中であったUnityの勉強も兼ねて、スマホで操作できる暇つぶしになるような迷路ゲームを制作した。
