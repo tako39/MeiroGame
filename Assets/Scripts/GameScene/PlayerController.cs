@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour {
     {
         isGoal = false;
 
-        if(GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) //タイムアタックなら
+        if(GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) //タイムアタックなら
         {
             timerText.enabled = true;   //時間経過を表示する
 
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour {
 
     private void TimeCount()    //経過時間
     {
-        if (GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) //タイムアタックの場合
+        if (GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) //タイムアタックの場合
         {
             if (!isGoal) seconds += Time.deltaTime;
 
@@ -134,13 +134,13 @@ public class PlayerController : MonoBehaviour {
 
     private void GoalCheck()    //ゴール時の処理
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.GOAL && !isGoal) 
+        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.GOAL && !isGoal) 
         {
             isGoal = true;
             GameManager.Instance.AddGoalCount();    //ゴールした数を増やす
 
             //タイムアタックで3回ゴールした時はResultシーンへ
-            if ((GameManager.Instance.GetGameType() == GameManager.TIME_ATTACK) && 
+            if ((GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) && 
                 (GameManager.Instance.GetGoalCount() >= 3))
             {
                 GameManager.Instance.SetTotalTime(minutes * 60 + (int)seconds);     //クリア時間を保存
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
 
     private void TrapCheck()    //罠に乗った時の処理
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.TRAP)
+        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.TRAP)
         {
             if (firstOnTrap)    //罠に乗った瞬間
             {
@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour {
 
     private void RecoveryCheck()
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == GameManager.RECOVERY)
+        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.RECOVERY)
         {
             if (firstOnRecovery)    //回復床に乗った瞬間
             {
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour {
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
                 GameManager.Instance.PlayerRecovered();
 
-                GameDirector.map[nowPosition[0], nowPosition[1]] = GameManager.ROAD;
+                GameDirector.map[nowPosition[0], nowPosition[1]] = (int)GameManager.MapType.ROAD;
             }
             firstOnRecovery = false;
         }
@@ -215,7 +215,8 @@ public class PlayerController : MonoBehaviour {
             int ny = nowPosition[0] + dy[i];
             int nx = nowPosition[1] + dx[i];
 
-            if (0 <= nx && nx < GameDirector.WIDTH && 0 <= ny && ny < GameDirector.HEIGHT && GameDirector.map[ny, nx] != GameManager.WALL)
+            if (0 <= nx && nx < GameDirector.WIDTH && 0 <= ny && ny < GameDirector.HEIGHT && 
+                GameDirector.map[ny, nx] != (int)GameManager.MapType.WALL)
             {
                 isMovable[i] = true; //通路があるときは動かすことができる
             }

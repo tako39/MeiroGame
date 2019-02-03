@@ -45,7 +45,7 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetGameType(GameManager.EASY);
+        GameManager.Instance.SetGameType(GameManager.GameType.EASY);
         GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
@@ -55,7 +55,7 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetGameType(GameManager.NORMAL);
+        GameManager.Instance.SetGameType(GameManager.GameType.NORMAL);
         GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
@@ -65,7 +65,7 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetGameType(GameManager.DIFFICULT);
+        GameManager.Instance.SetGameType(GameManager.GameType.DIFFICULT);
         GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));
@@ -75,7 +75,7 @@ public class SelectButton : MonoBehaviour {
     {
         SoundManager.Instance.ClickSound();
 
-        GameManager.Instance.SetGameType(GameManager.TIME_ATTACK);
+        GameManager.Instance.SetGameType(GameManager.GameType.TIME_ATTACK);
         GameManager.Instance.SetMazeSize();
 
         StartCoroutine(GameManager.Instance.LoadSceneAsync("CountScene"));

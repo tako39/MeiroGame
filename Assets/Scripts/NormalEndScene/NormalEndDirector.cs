@@ -19,15 +19,15 @@ public class NormalEndDirector : MonoBehaviour
 
         string bestCountStr = "";   //保存する名前
 
-        if(GameManager.Instance.GetGameType() == GameManager.EASY)
+        if(GameManager.Instance.GetGameType() == GameManager.GameType.EASY)
         {
             bestCountStr = "BestCountEasy";
         }
-        else if(GameManager.Instance.GetGameType() == GameManager.NORMAL)
+        else if(GameManager.Instance.GetGameType() == GameManager.GameType.NORMAL)
         {
             bestCountStr = "BestCountNormal";
         }
-        else if(GameManager.Instance.GetGameType() == GameManager.DIFFICULT)
+        else if(GameManager.Instance.GetGameType() == GameManager.GameType.DIFFICULT)
         {
             bestCountStr = "BestCountDifficult";
         }
