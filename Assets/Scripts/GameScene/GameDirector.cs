@@ -69,9 +69,9 @@ public class GameDirector : MonoBehaviour {
 public class Map
 {
     public const int MAX_HEIGHT = 30;  //迷路の最大の縦幅
-    public const int MAX_WIDTH = 30;  //迷路の最大の横幅
+    public const int MAX_WIDTH = 30;   //迷路の最大の横幅
 
-    private const int INF = (int)1e5;   //初期化用
+    private const int INF = (int)1e5;  //初期化用
 
     public int HEIGHT { get; private set; }           //迷路の縦幅
     public int WIDTH { get; private set; }            //迷路の横幅

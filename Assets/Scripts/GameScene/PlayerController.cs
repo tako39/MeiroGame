@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
     private int[] dx = new int[] { 1, -1, 0, 0 }; //右、左、上、下
     private int[] dy = new int[] { 0, 0, -1, 1 };
 
-    private int[] nowPosition = new int[2];  //現在の位置
+    private static int[] nowPosition = new int[2];  //現在の位置
 
     private bool[] isMovable = new bool[4];  //移動可能かどうか(0:右、1:左、2:上、3:下)
 
@@ -25,14 +25,14 @@ public class PlayerController : MonoBehaviour {
 
     private bool isGoal = false;    //ゴールしたか
 
-    public Text timerText;       //経過時間を知らせるテキスト
+    public Text timerText;          //経過時間を知らせるテキスト
 
-    private int minutes;         //分
-    private float seconds;       //秒
-    private float oldseconds;    //前の秒数の記憶
+    private int minutes;            //分
+    private float seconds;          //秒
+    private float oldseconds;       //前の秒数の記憶
 
-    private Vector3 StartPos;    //フリック入力の最初の位置
-    private Vector3 EndPos;      //フリック入力の最後の位置
+    private Vector3 StartPos;       //フリック入力の最初の位置
+    private Vector3 EndPos;         //フリック入力の最後の位置
 
     [SerializeField]
     private GameObject hpDisplay;   //体力の表示、非表示用
@@ -40,8 +40,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     private Healthbar hpBar;        //体力
 
-    bool firstOnTrap = true;        //始めて罠の床に乗ったか
-    bool firstOnRecovery = true;    //始めて回復床に乗ったか
+    private bool firstOnRecovery = true;    //始めて回復床に乗ったか
+    private bool firstOnTrap = true;        //始めて罠の床に乗ったか
+
+    public static int[] GetNowPosition()    //プレイヤーの位置の取得
+    {
+        return nowPosition;
+    }
 
     private void Awake()
     {
@@ -84,9 +89,9 @@ public class PlayerController : MonoBehaviour {
 
         GoalCheck();        //ゴール処理
 
-        TrapCheck();        //罠ダメージ
+        TrapCheck();        //罠の処理
 
-        RecoveryCheck();    //回復処理
+        RecoveryCheck();    //回復床の処理
 
         PlayerHpCheck();    //プレイヤーが生きているか
 
@@ -157,11 +162,11 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void TrapCheck()    //罠に乗った時の処理
+    private void TrapCheck()        //罠に乗った時の処理
     {
         if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.TRAP)
         {
-            if (firstOnTrap)    //罠に乗った瞬間
+            if (firstOnTrap)        //罠に乗った瞬間
             {
                 SoundManager.Instance.DamageSound();        //ダメージ音
                 hpBar.TakeDamage(GameManager.trapDamage);   //ダメージを食らう
@@ -175,7 +180,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void RecoveryCheck()
+    private void RecoveryCheck()    //回復床に乗った時の処理
     {
         if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.RECOVERY)
         {
@@ -184,7 +189,7 @@ public class PlayerController : MonoBehaviour {
                 SoundManager.Instance.RecoverySound();         //回復音
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
                 GameManager.Instance.PlayerRecovered();
-
+                
                 GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] = (int)GameManager.MapType.ROAD;
             }
             firstOnRecovery = false;
@@ -246,7 +251,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void GetDirection() //フリック入力で取得する向き
+    private void GetDirection()     //フリック入力で取得する向き
     {
         float dirX = EndPos.x - StartPos.x; //x方向の移動
         float dirY = EndPos.y - StartPos.y; //y方向の移動
