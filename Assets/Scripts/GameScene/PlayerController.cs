@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour {
 
     private void Firstpos()     // 最初の位置の設定
     {
-        nowPosition = GameDirector.startPos;
+        nowPosition = GameDirector.gameMap.startPos;
 
         transform.position = new Vector3(nowPosition[1], -nowPosition[0], 0.0f); //スタート位置に移動
     }
@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour {
 
     private void GoalCheck()    //ゴール時の処理
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.GOAL && !isGoal) 
+        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.GOAL && !isGoal) 
         {
             isGoal = true;
             GameManager.Instance.AddGoalCount();    //ゴールした数を増やす
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
 
     private void TrapCheck()    //罠に乗った時の処理
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.TRAP)
+        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.TRAP)
         {
             if (firstOnTrap)    //罠に乗った瞬間
             {
@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour {
 
     private void RecoveryCheck()
     {
-        if (GameDirector.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.RECOVERY)
+        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.RECOVERY)
         {
             if (firstOnRecovery)    //回復床に乗った瞬間
             {
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour {
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
                 GameManager.Instance.PlayerRecovered();
 
-                GameDirector.map[nowPosition[0], nowPosition[1]] = (int)GameManager.MapType.ROAD;
+                GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] = (int)GameManager.MapType.ROAD;
             }
             firstOnRecovery = false;
         }
@@ -215,8 +215,8 @@ public class PlayerController : MonoBehaviour {
             int ny = nowPosition[0] + dy[i];
             int nx = nowPosition[1] + dx[i];
 
-            if (0 <= nx && nx < GameDirector.WIDTH && 0 <= ny && ny < GameDirector.HEIGHT && 
-                GameDirector.map[ny, nx] != (int)GameManager.MapType.WALL)
+            if (0 <= nx && nx < GameDirector.gameMap.WIDTH && 0 <= ny && ny < GameDirector.gameMap.HEIGHT && 
+                GameDirector.gameMap.map[ny, nx] != (int)GameManager.MapType.WALL)
             {
                 isMovable[i] = true; //通路があるときは動かすことができる
             }

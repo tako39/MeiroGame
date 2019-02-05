@@ -17,7 +17,7 @@ public class StartDirector : MonoBehaviour {
 
     // Use this for initialization
     private void Start () {
-        mazeDisplay();     //迷路を表示
+        MazeDisplay();     //迷路を表示
 	}
 	
 	// Update is called once per frame
@@ -29,7 +29,7 @@ public class StartDirector : MonoBehaviour {
         }
     }
 
-    private void mazeDisplay() //迷路を表示する
+    private void MazeDisplay() //迷路を表示する
     {
         for (int z = HEIGHT - 1; z >= 0; z--)
         {
