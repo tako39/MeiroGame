@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //GameSceneのGameDirectorにアタッチ(迷路生成)
@@ -9,7 +10,8 @@ public class GameDirector : MonoBehaviour {
     private new GameObject[,] gameObject = new GameObject[Map.MAX_HEIGHT, Map.MAX_WIDTH];   //オブジェクト
 
     private void Awake () {
-        gameMap.Generate();        //迷路生成
+        //gameMap.Generate();        //迷路生成
+        gameMap.CreateMazeWALL();
     }
 
     // Use this for initialization
@@ -73,6 +75,16 @@ public class Map
 
     private const int INF = (int)1e5;  //初期化用
 
+    private enum RETURN
+    {
+        NONE = -1,      //なし
+        MADE =  0,      //生成した
+        NOT_MADE = 1,   //生成していない
+    }
+
+    private readonly int[] dx = new int[] { 1, 0, -1, 0 };    //上下左右4方向のx
+    private readonly int[] dy = new int[] { 0, 1, 0, -1 };    //上下左右4方向のy
+
     public int HEIGHT { get; private set; }           //迷路の縦幅
     public int WIDTH { get; private set; }            //迷路の横幅
 
@@ -82,23 +94,17 @@ public class Map
     public int[] startPos = new int[2];  //スタート
     public int[] goalPos = new int[2];   //ゴール
 
-    public void Generate()
+    private List<Vector2> node = new List<Vector2>();   //壁が伸びていない柱
+
+    private List<Vector2> path = new List<Vector2>();   //探索済の柱
+
+    private List<Vector2> dir = new List<Vector2>()     //方向
     {
-        InitMaze();    //迷路の初期化
-        CreateMaze();  //迷路の生成
-
-        GoalSearch(startPos[0], startPos[1]);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
-        GoalSearch(goalPos[0], goalPos[1]);     //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
-
-        map[startPos[0], startPos[1]] = (int)GameManager.MapType.START;  //スタート地点
-        map[goalPos[0], goalPos[1]] = (int)GameManager.MapType.GOAL;   //ゴール地点
-
-        if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
-        {
-            SetTrap();      //通常プレイのときは迷路に罠を追加
-            SetRecovery();  //回復床も追加
-        }
-    }
+            new Vector2(2, 0),
+            new Vector2(0, 2),
+            new Vector2(-2, 0),
+            new Vector2(0, -2),
+    };
 
     private void InitMaze() //迷路の初期化
     {
@@ -115,25 +121,140 @@ public class Map
             HEIGHT = GameManager.Instance.GetMazeSize(Random.Range(0, 3));
             WIDTH  = GameManager.Instance.GetMazeSize(Random.Range(0, 3));
         }
-
-        for (int y = 0; y < HEIGHT; y++)
+        
+        for(int y = 0; y < HEIGHT; y++)
         {
-            for (int x = 0; x < WIDTH; x++)
+            for(int x = 0; x < WIDTH; x++)
             {
-                map[y, x] = (int)GameManager.MapType.WALL; //全て壁にする
+                if(y == 0 || y == HEIGHT - 1 || x == 0 || x == WIDTH - 1)   //外周は壁
+                {
+                    map[y, x] = (int)GameManager.MapType.WALL;
+                }
+                else if((y % 2 == 0) && (x % 2 == 0))   //偶数は柱
+                {
+                    map[y, x] = (int)GameManager.MapType.WALL;
+                    node.Add(new Vector2(x, y));
+                }
+                else   //それ以外は通路
+                {
+                    map[y, x] = (int)GameManager.MapType.ROAD;
+                }
             }
         }
     }
 
-    private void CreateMaze()     //迷路の生成
+    public void CreateMazeWALL()   //壁伸ばし法
+    {
+        InitMaze(); //初期化
+
+        while(node.Count > 0)   //nodeが無くなるまで
+        {
+            ChooseNode(node[Random.Range(0, node.Count)]);
+        }
+
+        SetTmpStart(); //スタート地点のセット
+
+        GoalSearch(startPos[0], startPos[1]);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
+        GoalSearch(goalPos[0], goalPos[1]);     //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
+
+        map[startPos[0], startPos[1]] = (int)GameManager.MapType.START;  //スタート地点
+        map[goalPos[0], goalPos[1]]   = (int)GameManager.MapType.GOAL;   //ゴール地点
+
+        //if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
+        //{
+        //    SetTrap();      //通常プレイのときは迷路に罠を追加
+        //    SetRecovery();  //回復床も追加
+        //}
+    }
+
+    private int SearchPath(Vector2 p)   //探索済みかどうか
+    {
+        for(int i = 0; i < path.Count; i++)
+        {
+            if(p.y == path[i].y && p.x == path[i].x)
+            {
+                return i;
+            }
+        }
+        return (int)RETURN.NONE;
+    }
+
+    private int SearchNode(Vector2 p)   //未探索かどうか
+    {
+        for (int i = 0; i < node.Count; i++)
+        {
+            if (p.y == node[i].y && p.x == node[i].x)
+            {
+                return i;
+            }
+        }
+        return (int)RETURN.NONE;
+    }
+
+    private int ChooseNode(Vector2 p)   //壁伸ばし法
+    {
+        if(SearchPath(p) != (int)RETURN.NONE) //探索済なら
+        {
+            return (int)RETURN.NOT_MADE;    //生成できない
+        }
+        else    //未探索なら
+        {
+            path.Add(p);    //pathに入れる
+
+            int sNode = SearchNode(p);
+            if (sNode != (int)RETURN.NONE)    //未探索のとき
+            {
+                node.RemoveAt(sNode);   //nodeから削除
+
+                dir = dir.OrderBy(n => System.Guid.NewGuid()).ToList(); //シャッフル
+
+                int r = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    r = ChooseNode(new Vector2(p.x + (int)dir[i].x, p.y + (int)dir[i].y));
+                    if(r == (int)RETURN.MADE)
+                    {
+                        break;
+                    }
+                }
+
+                if(r == (int)RETURN.NOT_MADE)
+                {
+                    node.Add(path[path.Count - 1]);     //pathから戻す
+                    path.RemoveAt(path.Count - 1);
+                }
+
+                return r;
+            }
+            else    //既に壁のとき、pathを繋げる
+            {
+                Vector2 p_1, p_2;
+                
+                p_2 = path[path.Count - 1];
+                path.RemoveAt(path.Count - 1);
+
+                do
+                {
+                    p_1 = p_2; 
+                    p_2 = path[path.Count - 1];
+                    path.RemoveAt(path.Count - 1);
+
+                    map[(int)(p_1.y + p_2.y) / 2, (int)(p_1.x + p_2.x) / 2] = (int)GameManager.MapType.WALL;    //間を埋める
+                }
+                while (path.Count > 0);
+
+                return (int)RETURN.MADE;
+            }
+        }
+    }
+
+    private void SetTmpStart()     //仮のスタート地点をセット
     {
         int y = MakeRandOdd(HEIGHT - 2);    //ランダムなスタート地点(奇数)を決める
         int x = MakeRandOdd(WIDTH - 2);
 
         startPos[0] = y;    //スタート地点としてコピー
         startPos[1] = x;
-
-        DigMaze(y, x);      //(y, x)を始点として迷路を作る
     }
 
     private int MakeRandOdd(int mod)   //奇数の乱数を作る
@@ -142,34 +263,6 @@ public class Map
         if (r % 2 == 0) r++;
         if (r > mod) r -= 2;
         return r;
-    }
-
-    private void DigMaze(int y, int x)    //迷路の作成(穴掘り法)
-    {
-        int d = Random.Range(0, 4);
-        int dd = d;
-
-        while (true)    //4方向に掘り進められなくなるまで
-        {
-            int py = y + GameManager.Instance.dy[d] * 2;     //二つ先を見る
-            int px = x + GameManager.Instance.dx[d] * 2;
-
-            //掘り進められないとき方向を変える
-            if ((px < 0) || (py < 0) || (px >= WIDTH) || (py >= HEIGHT) ||
-                (map[py, px] != (int)GameManager.MapType.WALL))
-            {
-                d++;
-                if (d == 4) d = 0;
-                if (d == dd) return;    //4方向試し終わった時
-                continue;
-            }
-
-            map[y + GameManager.Instance.dy[d], x + GameManager.Instance.dx[d]] = (int)GameManager.MapType.ROAD;
-            map[py, px] = (int)GameManager.MapType.ROAD;
-
-            DigMaze(py, px);           //(py, px)を起点として再帰
-            d = dd = Random.Range(0, 4);
-        }
     }
 
     private void GoalSearch(int sy, int sx)    //ゴールの決定(幅優先探索で一番遠い点をゴールとする)
@@ -203,8 +296,8 @@ public class Map
 
             for (int i = 0; i < 4; i++)
             {
-                int ny = p[0] + GameManager.Instance.dy[i];
-                int nx = p[1] + GameManager.Instance.dx[i];
+                int ny = p[0] + dy[i];
+                int nx = p[1] + dx[i];
 
                 if (0 <= ny && ny < HEIGHT && 0 <= nx && nx < WIDTH)
                 {

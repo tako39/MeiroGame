@@ -41,9 +41,6 @@ public class GameManager : MonoBehaviour
     public const int maxPlayerHp = 100;    //プレイヤーの最大HP
     public const int minPlayerHp = 0;      //プレイヤーの最小HP
 
-    public readonly int[] dx = new int[] { 1, 0, -1, 0 };    //上下左右4方向のx
-    public readonly int[] dy = new int[] { 0, 1, 0, -1 };    //上下左右4方向のy
-
     public IEnumerator LoadSceneAsync(string sceneName ,bool autoChangeSceneAfterLoading = true)
     {
         // シーン名がないときはエラーを出す
