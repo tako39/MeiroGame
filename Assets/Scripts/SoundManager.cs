@@ -21,6 +21,9 @@ public class SoundManager : MonoBehaviour
     private AudioClip countSound;       //カウントダウン音
 
     [SerializeField]
+    private AudioClip incorrectSound;   //不正解音
+
+    [SerializeField]
     private AudioClip damageSound;      //ダメージ音
 
     [SerializeField]
@@ -58,6 +61,11 @@ public class SoundManager : MonoBehaviour
     public void CountSound()
     {
         audioSource.PlayOneShot(countSound);
+    }
+
+    public void IncorrectSound()
+    {
+        audioSource.PlayOneShot(incorrectSound);
     }
 
     public void DamageSound()

@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     private Healthbar hpBar;        //体力
 
+    private bool onAnsRoute = true;         //正解の経路上にいるか
     private bool firstOnRecovery = true;    //始めて回復床に乗ったか
     private bool firstOnTrap = true;        //始めて罠の床に乗ったか
 
@@ -88,6 +89,8 @@ public class PlayerController : MonoBehaviour {
         if (isRotate) return; //回転中は何もしない
 
         GoalCheck();        //ゴール処理
+
+        AnsRouteCheck();    //不正解の経路の処理
 
         TrapCheck();        //罠の処理
 
@@ -162,6 +165,26 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void AnsRouteCheck()    //不正解の経路を歩いた時の処理
+    {
+        //現在地が正解の経路かどうか
+        if(GameDirector.gameMap.ansRoute[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.ANS_ROUTE)
+        {
+            if (!onAnsRoute)    //不正解経路から正解経路に復帰したとき
+            {
+                SoundManager.Instance.IncorrectSound();         //不正解音
+                hpBar.TakeDamage(GameManager.incorrectDamage);  //ダメージを食らう
+                GameManager.Instance.PlayerDamaged(GameManager.incorrectDamage);
+
+                onAnsRoute = true;
+            }
+        }
+        else
+        {
+            onAnsRoute = false;
+        }
+    }
+
     private void TrapCheck()        //罠に乗った時の処理
     {
         if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.TRAP)
@@ -170,9 +193,10 @@ public class PlayerController : MonoBehaviour {
             {
                 SoundManager.Instance.DamageSound();        //ダメージ音
                 hpBar.TakeDamage(GameManager.trapDamage);   //ダメージを食らう
-                GameManager.Instance.PlayerDamaged();
+                GameManager.Instance.PlayerDamaged(GameManager.trapDamage);
+
+                firstOnTrap = false;
             }
-            firstOnTrap = false;
         }
         else
         {
@@ -188,11 +212,12 @@ public class PlayerController : MonoBehaviour {
             {
                 SoundManager.Instance.RecoverySound();         //回復音
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
-                GameManager.Instance.PlayerRecovered();
+                GameManager.Instance.PlayerRecovered(GameManager.recoveryAmount);
                 
                 GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] = (int)GameManager.MapType.ROAD;
+
+                firstOnRecovery = false;
             }
-            firstOnRecovery = false;
         }
         else
         {

@@ -16,7 +16,7 @@ public class GameDirector : MonoBehaviour {
     // Use this for initialization
     private void Start() {
         MazeDisplay();             //迷路の表示
-        gameMap.TestDisplay();     //マップやそのコストの確認用
+        //gameMap.TestDisplay();     //マップやそのコストの確認用
     }
 
     // Update is called once per frame
@@ -334,11 +334,13 @@ public class Map
         while (nowPos != startPos)
         {
             //経路の記憶
-            if (nowPos != goalPos) ansRoute[(int)nowPos.y, (int)nowPos.x] = (int)GameManager.MapType.ANS_ROUTE;
+            ansRoute[(int)nowPos.y, (int)nowPos.x] = (int)GameManager.MapType.ANS_ROUTE;
 
             Vector2 tmpPos = nowPos;
             nowPos -= memDirect[(int)tmpPos.y, (int)tmpPos.x];  //戻っていく
         }
+
+        ansRoute[(int)startPos.y, (int)startPos.x] = (int)GameManager.MapType.ANS_ROUTE;
     }
 
     private void SetTrap()      //迷路に１つ罠を追加

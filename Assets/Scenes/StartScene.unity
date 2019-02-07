@@ -1404,6 +1404,7 @@ MonoBehaviour:
   clickSound: {fileID: 8300000, guid: 06f7efa8bc66e6047b326e37cc3cbb34, type: 3}
   rotateSound: {fileID: 8300000, guid: c9f8dee54e98f0640a00e5a3926cb588, type: 3}
   countSound: {fileID: 8300000, guid: e300a49a9531869439ff1a142551d6e8, type: 3}
+  incorrectSound: {fileID: 8300000, guid: eeff47ad73114e042b031d171fd47e7e, type: 3}
   damageSound: {fileID: 8300000, guid: 11be77ca3716d4544bce54414b561416, type: 3}
   recoverySound: {fileID: 8300000, guid: 97039f4abb180824d9724ad6952f1ea4, type: 3}
 --- !u!4 &1453401609

@@ -36,8 +36,9 @@ public class GameManager : MonoBehaviour
         TIME_ATTACK = 3,    //タイムアタック
     }
 
-    public const int trapDamage = 20;      //罠によるダメージ
-    public const int recoveryAmount = 10;  //回復床による回復
+    public const int incorrectDamage = 20;  //不正解経路によるダメージ
+    public const int trapDamage = 20;       //罠によるダメージ
+    public const int recoveryAmount = 40;   //回復床による回復
 
     public const int maxPlayerHp = 100;    //プレイヤーの最大HP
     public const int minPlayerHp = 0;      //プレイヤーの最小HP
@@ -110,14 +111,14 @@ public class GameManager : MonoBehaviour
         return playerHp;
     }
 
-    public void PlayerDamaged()             //ダメージを受ける
+    public void PlayerDamaged(int amount)             //ダメージを受ける
     {
-        playerHp -= trapDamage;
+        playerHp -= amount;
     }
 
-    public void PlayerRecovered()           //回復する
+    public void PlayerRecovered(int amount)           //回復する
     {
-        if(playerHp + recoveryAmount <= maxPlayerHp) playerHp += recoveryAmount;
+        if(playerHp + amount <= maxPlayerHp) playerHp += amount;
     }
 
     public void SetIsPause(bool pause)   //ポーズ中かどうかをセット
