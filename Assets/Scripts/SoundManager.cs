@@ -43,6 +43,14 @@ public class SoundManager : MonoBehaviour
         
     }
 
+    private void StartVibrate()  //バイブレーションを鳴らす
+    {
+        if (SystemInfo.supportsVibration)
+        {
+            Handheld.Vibrate();
+        }
+    }
+
     public void StartSound()
     {
         audioSource.PlayOneShot(startSound);
@@ -65,6 +73,7 @@ public class SoundManager : MonoBehaviour
 
     public void IncorrectSound()
     {
+        StartVibrate();
         audioSource.PlayOneShot(incorrectSound);
     }
 
