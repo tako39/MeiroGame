@@ -6,22 +6,22 @@ using UnityEngine.SceneManagement;
 public class PauseScript : MonoBehaviour {
 
     [SerializeField]
-    private GameObject pauseButton;  //プレイ中に表示する画像
+    private GameObject pauseButton;     //プレイ中に表示する画像
 
     [SerializeField]
-    private GameObject startButton;  //ポーズ中に表示する画像
+    private GameObject startButton;     //ポーズ中に表示する画像
 
     [SerializeField]
-    private GameObject pauseScreen;  //ポーズ画面
+    private GameObject pauseScreen;     //ポーズ画面
 
     [SerializeField]
-    private GameObject endButton;    //やめるボタン
+    private GameObject endButton;       //やめるボタン
     
-    private int clickCount;          //何回押したか
+    private bool isPause = false;       //ポーズ中か
 
     // Use this for initialization
     private void Start () {
-        clickCount = 0;
+        
 	}
 	
 	// Update is called once per frame
@@ -31,10 +31,12 @@ public class PauseScript : MonoBehaviour {
 
     public void PushPauseButton() //ポーズボタンを押したとき
     {
-        clickCount++;
+        isPause = !isPause;
 
-        if (clickCount % 2 == 1)
+        if (isPause)
         {
+            SoundManager.Instance.StopAudio();
+
             GameManager.Instance.SetIsPause(true);
 
             pauseButton.SetActive(false);
@@ -44,6 +46,8 @@ public class PauseScript : MonoBehaviour {
         }
         else
         {
+            SoundManager.Instance.PlayAudio();
+
             GameManager.Instance.SetIsPause(false);
 
             pauseButton.SetActive(true);

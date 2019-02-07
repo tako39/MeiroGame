@@ -19,10 +19,9 @@ public class SelectButton : MonoBehaviour {
     [SerializeField]
     private GameObject difficultyDisplay;    //難易度選択
 
-	// Use this for initialization
-	private void Start () {
-        GameManager.Instance.SetPlayerHp(GameManager.maxPlayerHp);
-        GameManager.Instance.SetGoalCount(0);   //ゴール数の初期化
+    // Use this for initialization
+    private void Start () {
+
     }
 	
 	// Update is called once per frame

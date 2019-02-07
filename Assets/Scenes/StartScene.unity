@@ -1302,10 +1302,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1399,7 +1399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca60cebef0c26fa49b59461bc7da9e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1453401607}
+  audioSource: {fileID: 0}
   startSound: {fileID: 8300000, guid: 87fed72fd00a949418afe376dd3c773b, type: 3}
   clickSound: {fileID: 8300000, guid: 06f7efa8bc66e6047b326e37cc3cbb34, type: 3}
   rotateSound: {fileID: 8300000, guid: c9f8dee54e98f0640a00e5a3926cb588, type: 3}
@@ -1407,6 +1407,10 @@ MonoBehaviour:
   incorrectSound: {fileID: 8300000, guid: eeff47ad73114e042b031d171fd47e7e, type: 3}
   damageSound: {fileID: 8300000, guid: 11be77ca3716d4544bce54414b561416, type: 3}
   recoverySound: {fileID: 8300000, guid: 97039f4abb180824d9724ad6952f1ea4, type: 3}
+  startBGM: {fileID: 8300000, guid: 0b47f0ca75234a34ba5ad6c09c1cb0dd, type: 3}
+  selectBGM: {fileID: 8300000, guid: 26ccc3b0d54934a45b77e60c18911f7d, type: 3}
+  gameBGM: {fileID: 8300000, guid: 58002535590af0d42bb82dd766bfd95b, type: 3}
+  endBGM: {fileID: 8300000, guid: 4b1f914af07e4b044beabc658f974d2e, type: 3}
 --- !u!4 &1453401609
 Transform:
   m_ObjectHideFlags: 0

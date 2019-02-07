@@ -10,6 +10,11 @@ public class NormalEndDirector : MonoBehaviour
     [SerializeField]
     private Text bestCountText;
 
+    private void Awake()
+    {
+        SoundManager.Instance.EndBGM();   //BGM開始
+    }
+
     // Start is called before the first frame update
     private void Start()
     {

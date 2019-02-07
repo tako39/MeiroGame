@@ -10,7 +10,9 @@ public class GameDirector : MonoBehaviour {
     private new GameObject[,] gameObject = new GameObject[Map.MAX_HEIGHT, Map.MAX_WIDTH];   //オブジェクト
 
     private void Awake () {
-        gameMap.CreateMazeWALL();
+        SoundManager.Instance.GameBGM();   //BGM開始
+
+        gameMap.CreateMazeWALL();           //迷路生成
     }
 
     // Use this for initialization

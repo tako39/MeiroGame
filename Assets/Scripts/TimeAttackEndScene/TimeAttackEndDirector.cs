@@ -10,8 +10,13 @@ public class TimeAttackEndDirector : MonoBehaviour {
     [SerializeField]
     private Text bestTimeText;   //ベストタイムの表示
 
-	// Use this for initialization
-	private void Start () {
+    private void Awake()
+    {
+        SoundManager.Instance.EndBGM();   //BGM開始
+    }
+
+    // Use this for initialization
+    private void Start () {
         int clearTime = GameManager.Instance.GetTotalTime();    //クリア時間を取得
 
         int minutes = clearTime / 60;   //分
