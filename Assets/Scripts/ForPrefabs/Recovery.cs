@@ -26,8 +26,6 @@ public class Recovery : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        int[] pPos = PlayerController.GetNowPosition();
-
         if (firstRecover) //プレイヤーが乗った時マテリアルを通路にする
         {
             if (other.gameObject.CompareTag("Player"))

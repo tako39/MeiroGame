@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
     private int[] dx = new int[] { 1, -1, 0, 0 }; //右、左、上、下
     private int[] dy = new int[] { 0, 0, -1, 1 };
 
-    private static int[] nowPosition = new int[2];  //現在の位置
+    private static Vector2 nowPosition = new Vector2();  //現在の位置
 
     private bool[] isMovable = new bool[4];  //移動可能かどうか(0:右、1:左、2:上、3:下)
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour {
     private bool firstOnRecovery = true;    //始めて回復床に乗ったか
     private bool firstOnTrap = true;        //始めて罠の床に乗ったか
 
-    public static int[] GetNowPosition()    //プレイヤーの位置の取得
+    public static Vector2 GetNowPosition()    //プレイヤーの位置の取得
     {
         return nowPosition;
     }
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour {
     {
         nowPosition = GameDirector.gameMap.startPos;
 
-        transform.position = new Vector3(nowPosition[1], -nowPosition[0], 0.0f); //スタート位置に移動
+        transform.position = new Vector3(nowPosition.x, -nowPosition.y, 0.0f); //スタート位置に移動
     }
 
     private void TimeCount()    //経過時間
@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour {
 
     private void GoalCheck()    //ゴール時の処理
     {
-        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.GOAL && !isGoal) 
+        if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.GOAL && !isGoal) 
         {
             isGoal = true;
             GameManager.Instance.AddGoalCount();    //ゴールした数を増やす
@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour {
 
     private void TrapCheck()        //罠に乗った時の処理
     {
-        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.TRAP)
+        if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.TRAP)
         {
             if (firstOnTrap)        //罠に乗った瞬間
             {
@@ -182,7 +182,7 @@ public class PlayerController : MonoBehaviour {
 
     private void RecoveryCheck()    //回復床に乗った時の処理
     {
-        if (GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] == (int)GameManager.MapType.RECOVERY)
+        if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.RECOVERY)
         {
             if (firstOnRecovery)    //回復床に乗った瞬間
             {
@@ -190,7 +190,7 @@ public class PlayerController : MonoBehaviour {
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
                 GameManager.Instance.PlayerRecovered();
                 
-                GameDirector.gameMap.map[nowPosition[0], nowPosition[1]] = (int)GameManager.MapType.ROAD;
+                GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] = (int)GameManager.MapType.ROAD;
             }
             firstOnRecovery = false;
         }
@@ -212,13 +212,13 @@ public class PlayerController : MonoBehaviour {
     {
         for (int i = 0; i < 4; i++)
         {
-            isMovable[i] = false; //動くことができる方向
+            isMovable[i] = false;   //動くことができる方向
         }
 
         for (int i = 0; i < 4; i++) //4方向に対して通路を探す
         {
-            int ny = nowPosition[0] + dy[i];
-            int nx = nowPosition[1] + dx[i];
+            int ny = (int)nowPosition.y + dy[i];
+            int nx = (int)nowPosition.x + dx[i];
 
             if (0 <= nx && nx < GameDirector.gameMap.WIDTH && 0 <= ny && ny < GameDirector.gameMap.HEIGHT && 
                 GameDirector.gameMap.map[ny, nx] != (int)GameManager.MapType.WALL)
@@ -287,25 +287,25 @@ public class PlayerController : MonoBehaviour {
         {
             rotatePoint = transform.position + new Vector3(cubeSizeHalf, 0.0f, cubeSizeHalf); //回転の中心点
             rotateAxis = new Vector3(0.0f, -1.0f, 0.0f); //回転軸
-            nowPosition[1]++;
+            nowPosition.x++;
         }
         if ((Input.GetKeyDown(KeyCode.LeftArrow) || moveDirect[1]) && isMovable[1])  //左
         {
             rotatePoint = transform.position + new Vector3(-cubeSizeHalf, 0.0f, cubeSizeHalf);
             rotateAxis = new Vector3(0.0f, 1.0f, 0.0f);
-            nowPosition[1]--;
+            nowPosition.x--;
         }
         if ((Input.GetKeyDown(KeyCode.UpArrow) || moveDirect[2]) && isMovable[2])    //上
         {
             rotatePoint = transform.position + new Vector3(0.0f, cubeSizeHalf, cubeSizeHalf);
             rotateAxis = new Vector3(1.0f, 0.0f, 0.0f);
-            nowPosition[0]--;
+            nowPosition.y--;
         }
         if ((Input.GetKeyDown(KeyCode.DownArrow) || moveDirect[3]) && isMovable[3])  //下
         {
             rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, cubeSizeHalf);
             rotateAxis = new Vector3(-1.0f, 0.0f, 0.0f);
-            nowPosition[0]++;
+            nowPosition.y++;
         }
     }
 

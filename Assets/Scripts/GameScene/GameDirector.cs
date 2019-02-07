@@ -10,14 +10,13 @@ public class GameDirector : MonoBehaviour {
     private new GameObject[,] gameObject = new GameObject[Map.MAX_HEIGHT, Map.MAX_WIDTH];   //オブジェクト
 
     private void Awake () {
-        //gameMap.Generate();        //迷路生成
         gameMap.CreateMazeWALL();
     }
 
     // Use this for initialization
     private void Start() {
         MazeDisplay();             //迷路の表示
-        //gameMap.TestDisplay();   //マップやそのコストの確認用
+        gameMap.TestDisplay();     //マップやそのコストの確認用
     }
 
     // Update is called once per frame
@@ -82,23 +81,30 @@ public class Map
         NOT_MADE = 1,   //生成していない
     }
 
-    private readonly int[] dx = new int[] { 1, 0, -1, 0 };    //上下左右4方向のx
-    private readonly int[] dy = new int[] { 0, 1, 0, -1 };    //上下左右4方向のy
+    private List<Vector2> dir = new List<Vector2>()           //上下左右４方向
+    {
+        new Vector2(1, 0),
+        new Vector2(0, 1),
+        new Vector2(-1, 0),
+        new Vector2(0, -1),
+    };
 
-    public int HEIGHT { get; private set; }           //迷路の縦幅
-    public int WIDTH { get; private set; }            //迷路の横幅
+    public int HEIGHT { get; private set; }                 //迷路の縦幅
+    public int WIDTH { get; private set; }                  //迷路の横幅
 
-    public int[,] map = new int[MAX_HEIGHT, MAX_WIDTH];     //マップ
-    private int[,] dist = new int[MAX_HEIGHT, MAX_WIDTH];   //コスト
+    public  int[,] map    = new int[MAX_HEIGHT, MAX_WIDTH]; //マップ
+    private int[,] dist   = new int[MAX_HEIGHT, MAX_WIDTH]; //コスト
 
-    public int[] startPos = new int[2];  //スタート
-    public int[] goalPos = new int[2];   //ゴール
+    public  int[,] ansRoute  = new int[MAX_HEIGHT, MAX_WIDTH];          //正解の経路
+    private Vector2[,] memDirect = new Vector2[MAX_HEIGHT, MAX_WIDTH];  //方向の記憶
 
-    private List<Vector2> node = new List<Vector2>();   //壁が伸びていない柱
+    public Vector2 startPos = new Vector2();                //スタート
+    public Vector2 goalPos = new Vector2();                 //ゴール
 
-    private List<Vector2> path = new List<Vector2>();   //探索済の柱
+    private List<Vector2> node = new List<Vector2>();       //壁が伸びていない柱
+    private List<Vector2> path = new List<Vector2>();       //探索済の柱
 
-    private List<Vector2> dir = new List<Vector2>()     //方向
+    private List<Vector2> dir2 = new List<Vector2>()        //方向
     {
             new Vector2(2, 0),
             new Vector2(0, 2),
@@ -143,7 +149,7 @@ public class Map
         }
     }
 
-    public void CreateMazeWALL()   //壁伸ばし法
+    public void CreateMazeWALL()   //壁伸ばし法で迷路を生成
     {
         InitMaze(); //初期化
 
@@ -152,13 +158,15 @@ public class Map
             ChooseNode(node[Random.Range(0, node.Count)]);
         }
 
-        SetTmpStart(); //スタート地点のセット
+        SetTmpStart();          //スタート地点のセット
 
-        GoalSearch(startPos[0], startPos[1]);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
-        GoalSearch(goalPos[0], goalPos[1]);     //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
+        GoalSearch(startPos);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
+        GoalSearch(goalPos);    //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
 
-        map[startPos[0], startPos[1]] = (int)GameManager.MapType.START;  //スタート地点
-        map[goalPos[0], goalPos[1]]   = (int)GameManager.MapType.GOAL;   //ゴール地点
+        map[(int)startPos.y, (int)startPos.x] = (int)GameManager.MapType.START;  //スタート地点
+        map[(int)goalPos.y,  (int)goalPos.x]   = (int)GameManager.MapType.GOAL;  //ゴール地点
+
+        AnsRouteSearch();       //正解の経路を求める
 
         //if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
         //{
@@ -206,12 +214,12 @@ public class Map
             {
                 node.RemoveAt(sNode);   //nodeから削除
 
-                dir = dir.OrderBy(n => System.Guid.NewGuid()).ToList(); //シャッフル
+                dir2 = dir2.OrderBy(n => System.Guid.NewGuid()).ToList(); //シャッフル
 
                 int r = 0;
                 for (int i = 0; i < 4; i++)
                 {
-                    r = ChooseNode(new Vector2(p.x + (int)dir[i].x, p.y + (int)dir[i].y));
+                    r = ChooseNode(new Vector2(p.x + (int)dir2[i].x, p.y + (int)dir2[i].y));
                     if(r == (int)RETURN.MADE)
                     {
                         break;
@@ -253,8 +261,7 @@ public class Map
         int y = MakeRandOdd(HEIGHT - 2);    //ランダムなスタート地点(奇数)を決める
         int x = MakeRandOdd(WIDTH - 2);
 
-        startPos[0] = y;    //スタート地点としてコピー
-        startPos[1] = x;
+        startPos = new Vector2(x, y);       //スタート地点としてコピー
     }
 
     private int MakeRandOdd(int mod)   //奇数の乱数を作る
@@ -265,60 +272,73 @@ public class Map
         return r;
     }
 
-    private void GoalSearch(int sy, int sx)    //ゴールの決定(幅優先探索で一番遠い点をゴールとする)
+    private void GoalSearch(Vector2 start)    //ゴールの決定(幅優先探索で一番遠い点をゴールとする)
     {
-        Queue<int> queY = new Queue<int>();
-        Queue<int> queX = new Queue<int>();
-        int[] tmpGoal = new int[2];
+        Queue<Vector2> que = new Queue<Vector2>();
+        Vector2 tmpGoal = new Vector2();
 
-        startPos[0] = sy;
-        startPos[1] = sx;
+        startPos = start;
 
         for (int y = 0; y < HEIGHT; y++)
         {
             for (int x = 0; x < WIDTH; x++)
             {
-                dist[y, x] = INF;   //コストの初期化
+                dist[y, x] = INF;          //コストの初期化
+                ansRoute[y, x] = map[y, x];    //経路の初期化
+                memDirect[y, x] = Vector2.zero; //記憶する方向の初期化
             }
         }
 
-        queY.Enqueue(sy);
-        queX.Enqueue(sx);
-        dist[sy, sx] = 0;
+        que.Enqueue(start);
+        dist[(int)start.y, (int)start.x] = 0;
 
         int max_dist = 0;
 
-        while (queY.Count > 0)
+        while (que.Count > 0)
         {
-            int[] p = new int[2];
-            p[0] = queY.Dequeue();
-            p[1] = queX.Dequeue();
+            Vector2 p = new Vector2();
+            p = que.Dequeue();
 
             for (int i = 0; i < 4; i++)
             {
-                int ny = p[0] + dy[i];
-                int nx = p[1] + dx[i];
+                int ny = (int)p.y + (int)dir[i].y;
+                int nx = (int)p.x + (int)dir[i].x;
 
                 if (0 <= ny && ny < HEIGHT && 0 <= nx && nx < WIDTH)
                 {
                     if (map[ny, nx] != (int)GameManager.MapType.WALL && dist[ny, nx] == INF) //通路で且つ未訪問のとき
                     {
-                        queY.Enqueue(ny);
-                        queX.Enqueue(nx);
-                        dist[ny, nx] = dist[p[0], p[1]] + 1;
+                        que.Enqueue(new Vector2(nx, ny));
+                        dist[ny, nx] = dist[(int)p.y, (int)p.x] + 1;    //コストを＋１
+                        memDirect[ny, nx] = dir[i];                     //方向を記憶
 
                         if (max_dist < dist[ny, nx])    //最も遠い(コストが高い)地点をゴールとする
                         {
                             max_dist = dist[ny, nx];
-                            tmpGoal[0] = ny;
-                            tmpGoal[1] = nx;
+                            tmpGoal.y = ny;
+                            tmpGoal.x = nx;
                         }
                     }
                 }
             }
         }
-        goalPos[0] = tmpGoal[0];   //コピー
-        goalPos[1] = tmpGoal[1];
+
+        goalPos = tmpGoal;  //コピー
+    }
+
+    private void AnsRouteSearch()  //正解の経路を求める
+    {
+        //ゴールからスタートに戻る
+        Vector2 nowPos = goalPos;
+
+        while (nowPos != startPos)
+        {
+            //経路の記憶
+            if (nowPos != goalPos) ansRoute[(int)nowPos.y, (int)nowPos.x] = (int)GameManager.MapType.ANS_ROUTE;
+
+            Vector2 tmpPos = nowPos;
+            nowPos -= memDirect[(int)tmpPos.y, (int)tmpPos.x];  //戻っていく
+        }
     }
 
     private void SetTrap()      //迷路に１つ罠を追加
@@ -355,25 +375,51 @@ public class Map
         }
     }
 
-    public void TestDisplay()     //確認用
+    public void TestDisplay()     //迷路の確認用
     {
-        for (int y = HEIGHT - 1; y >= 0; y--)
+        Debug.Log("Start Cost: " + dist[(int)startPos.y, (int)startPos.x]);  //スタート地点のコスト
+        Debug.Log("Goal  Cost: " + dist[(int)goalPos.y, (int)goalPos.x]);    //ゴール地点のコスト
+
+        string debug = "Map: \n\n";
+
+        for (int y = 0; y < HEIGHT; y++)
         {
-            string s = "";
             for (int x = 0; x < WIDTH; x++)
             {
-                if (dist[y, x] == INF)
+                if(map[y, x] == (int)GameManager.MapType.ROAD)
                 {
-                    s += "1";
+                    if (ansRoute[y, x] == (int)GameManager.MapType.ANS_ROUTE)
+                    {
+                        debug += "<color=red>0</color>";
+                    }
+                    else
+                    {
+                        debug += "0";
+                    }
                 }
-                else
+                else if(map[y, x] == (int)GameManager.MapType.WALL)
                 {
-                    s += "0";
+                    debug += "1";
+                }
+                else if(map[y, x] == (int)GameManager.MapType.START)
+                {
+                    debug += "<color=blue>2</color>";
+                }
+                else if(map[y, x] == (int)GameManager.MapType.GOAL)
+                {
+                    debug += "<color=green>3</color>";
+                }
+                else if(map[y, x] == (int)GameManager.MapType.TRAP)
+                {
+                    debug += "4";
+                }
+                else if(map[y, x] == (int)GameManager.MapType.RECOVERY)
+                {
+                    debug += "5";
                 }
             }
-            Debug.Log(s);
+            debug += "\n";
         }
-        Debug.Log(dist[startPos[0], startPos[1]]);  //スタート地点のコスト
-        Debug.Log(dist[goalPos[0], goalPos[1]]);    //コール地点のコスト
+        Debug.Log(debug);
     }
 }

@@ -19,12 +19,13 @@ public class GameManager : MonoBehaviour
 
     public enum MapType
     {
-        ROAD     = 0,   //通路
-        WALL     = 1,   //壁
-        START    = 2,   //スタート地点
-        GOAL     = 3,   //ゴール地点
-        TRAP     = 4,   //トラップ
-        RECOVERY = 5,   //回復床
+        ROAD      = 0,   //通路
+        WALL      = 1,   //壁
+        START     = 2,   //スタート地点
+        GOAL      = 3,   //ゴール地点
+        TRAP      = 4,   //トラップ
+        RECOVERY  = 5,   //回復床
+        ANS_ROUTE = 6,   //正解の経路
     }
 
     public enum GameType
