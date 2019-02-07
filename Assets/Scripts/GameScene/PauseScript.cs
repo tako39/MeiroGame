@@ -61,6 +61,11 @@ public class PauseScript : MonoBehaviour {
         PlayerPrefs.SetFloat("Seconds", 0.0f);
         PlayerPrefs.SetInt("Goalnum", 0);
 
-        SceneManager.LoadScene("SelectScene");  //Selectシーンへ
+        if (GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) {
+            SceneManager.LoadScene("SelectScene");      //Selectシーンへ
+        }
+        else {
+            SceneManager.LoadScene("NormalEndScene");   //結果表示
+        }
     }
 }
