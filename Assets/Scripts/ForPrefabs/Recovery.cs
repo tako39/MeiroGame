@@ -2,20 +2,26 @@
 
 public class Recovery : MonoBehaviour
 {
-    private MeshRenderer mRenderer;         //マテリアル変更用
+    private Renderer renderer;         //マテリアル変更用
 
-    private bool firstRecover = true;       //回復床に乗ったか
+    private bool firstRecover = true;  //回復床に乗ったか
+
+    [SerializeField]
+    private Material recoveryMaterial; //回復床
+    [SerializeField]
+    private Material roadMaterial;     //通路
 
     private void Awake()
     {
-        mRenderer = GetComponent<MeshRenderer>();
-        mRenderer.material = mRenderer.materials[0];
+        renderer = GetComponent<Renderer>();
+        renderer.material = recoveryMaterial;   //回復床
+        firstRecover = true;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        firstRecover = true;
+
     }
 
     // Update is called once per frame
@@ -30,7 +36,7 @@ public class Recovery : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                mRenderer.material = mRenderer.materials[1];
+                renderer.material = roadMaterial;   //通路に変更
                 firstRecover = false;
             }
         }

@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     public const int incorrectDamage = 20;  //不正解経路によるダメージ
     public const int trapDamage = 20;       //罠によるダメージ
-    public const int recoveryAmount = 40;   //回復床による回復
+    public const int recoveryAmount = 20;   //回復床による回復
 
     public const int maxPlayerHp = 100;    //プレイヤーの最大HP
     public const int minPlayerHp = 0;      //プレイヤーの最小HP

@@ -41,8 +41,9 @@ public class PlayerController : MonoBehaviour {
     private Healthbar hpBar;        //体力
 
     private bool onAnsRoute = true;         //正解の経路上にいるか
-    private bool firstOnRecovery = true;    //始めて回復床に乗ったか
     private bool firstOnTrap = true;        //始めて罠の床に乗ったか
+    private bool firstOnRecovery = true;    //始めて回復床に乗ったか
+    private bool isOnRecovery = false;      //回復床に乗ったかどうか
 
     public static Vector2 GetNowPosition()    //プレイヤーの位置の取得
     {
@@ -172,9 +173,16 @@ public class PlayerController : MonoBehaviour {
         {
             if (!onAnsRoute)    //不正解経路から正解経路に復帰したとき
             {
-                SoundManager.Instance.IncorrectSound();         //不正解音
-                hpBar.TakeDamage(GameManager.incorrectDamage);  //ダメージを食らう
-                GameManager.Instance.PlayerDamaged(GameManager.incorrectDamage);
+                if (isOnRecovery)  //回復床に乗っていた時はダメージを食らわない
+                {
+                    isOnRecovery = false;
+                }
+                else               //それ以外はダメージを食らう
+                {
+                    SoundManager.Instance.IncorrectSound();         //不正解音
+                    hpBar.TakeDamage(GameManager.incorrectDamage);  //ダメージを食らう
+                    GameManager.Instance.PlayerDamaged(GameManager.incorrectDamage);
+                }
 
                 onAnsRoute = true;
             }
@@ -187,7 +195,7 @@ public class PlayerController : MonoBehaviour {
 
     private void TrapCheck()        //罠に乗った時の処理
     {
-        if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.TRAP)
+        if (GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] == (int)GameManager.MapType.TRAP && Trap.isTrap)
         {
             if (firstOnTrap)        //罠に乗った瞬間
             {
@@ -210,6 +218,8 @@ public class PlayerController : MonoBehaviour {
         {
             if (firstOnRecovery)    //回復床に乗った瞬間
             {
+                isOnRecovery = true;    //回復床に乗った
+
                 SoundManager.Instance.RecoverySound();         //回復音
                 hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
                 GameManager.Instance.PlayerRecovered(GameManager.recoveryAmount);

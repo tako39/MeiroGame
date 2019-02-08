@@ -12,7 +12,7 @@ public class GameDirector : MonoBehaviour {
     private void Awake () {
         SoundManager.Instance.GameBGM();   //BGM開始
 
-        gameMap.CreateMazeWALL();           //迷路生成
+        gameMap.CreateMaze();           //迷路生成
     }
 
     // Use this for initialization
@@ -114,6 +114,32 @@ public class Map
             new Vector2(0, -2),
     };
 
+    public void CreateMaze()   //壁伸ばし法で迷路を生成
+    {
+        InitMaze(); //初期化
+
+        while (node.Count > 0)   //nodeが無くなるまで
+        {
+            ChooseNode(node[Random.Range(0, node.Count)]);
+        }
+
+        SetTmpStart();          //スタート地点のセット
+
+        GoalSearch(startPos);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
+        GoalSearch(goalPos);    //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
+
+        map[(int)startPos.y, (int)startPos.x] = (int)GameManager.MapType.START;  //スタート地点
+        map[(int)goalPos.y, (int)goalPos.x] = (int)GameManager.MapType.GOAL;  //ゴール地点
+
+        AnsRouteSearch();       //正解の経路を求める
+
+        if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
+        {
+            SetTrap();      //通常プレイのときは迷路に罠を追加
+            if(Random.Range(0, 2) == 0) SetRecovery();  //偶に回復床も追加
+        }
+    }
+
     private void InitMaze() //迷路の初期化
     {
         if (GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) //タイムアタックなら13->17->21
@@ -149,32 +175,6 @@ public class Map
                 }
             }
         }
-    }
-
-    public void CreateMazeWALL()   //壁伸ばし法で迷路を生成
-    {
-        InitMaze(); //初期化
-
-        while(node.Count > 0)   //nodeが無くなるまで
-        {
-            ChooseNode(node[Random.Range(0, node.Count)]);
-        }
-
-        SetTmpStart();          //スタート地点のセット
-
-        GoalSearch(startPos);   //ランダムに決めたスタート地点から一番遠い点(p1)を求める
-        GoalSearch(goalPos);    //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
-
-        map[(int)startPos.y, (int)startPos.x] = (int)GameManager.MapType.START;  //スタート地点
-        map[(int)goalPos.y,  (int)goalPos.x]   = (int)GameManager.MapType.GOAL;  //ゴール地点
-
-        AnsRouteSearch();       //正解の経路を求める
-
-        //if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
-        //{
-        //    SetTrap();      //通常プレイのときは迷路に罠を追加
-        //    SetRecovery();  //回復床も追加
-        //}
     }
 
     private int SearchPath(Vector2 p)   //探索済みかどうか
@@ -350,8 +350,11 @@ public class Map
         while (true)
         {
             //ランダムにxとyを決める(0 と HEIGHT - 1 は壁)
-            int randomX = Random.Range(1, HEIGHT - 2);
-            int randomY = Random.Range(1, WIDTH - 2);
+            int randomX = Random.Range(1, HEIGHT - 1);
+            int randomY = Random.Range(1, WIDTH - 1);
+
+            //正解経路でないならやり直し
+            if (ansRoute[randomY, randomX] != (int)GameManager.MapType.ANS_ROUTE) continue;
 
             //もし通路なら罠に変更する
             if (map[randomY, randomX] == (int)GameManager.MapType.ROAD)
@@ -367,8 +370,11 @@ public class Map
         while (true)
         {
             //ランダムにxとyを決める(0 と HEIGHT - 1 は壁)
-            int randomX = Random.Range(1, HEIGHT - 2);
-            int randomY = Random.Range(1, WIDTH - 2);
+            int randomX = Random.Range(1, HEIGHT - 1);
+            int randomY = Random.Range(1, WIDTH - 1);
+
+            //正解経路ならやり直し
+            if (ansRoute[randomY, randomX] == (int)GameManager.MapType.ANS_ROUTE) continue;
 
             //もし通路なら回復床に変更する
             if (map[randomY, randomX] == (int)GameManager.MapType.ROAD)

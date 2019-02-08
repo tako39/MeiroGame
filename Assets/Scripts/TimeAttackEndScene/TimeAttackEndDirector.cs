@@ -6,9 +6,10 @@ public class TimeAttackEndDirector : MonoBehaviour {
 
     [SerializeField]
     private Text clearTimeText;  //クリア時間の表示
-
     [SerializeField]
     private Text bestTimeText;   //ベストタイムの表示
+    [SerializeField]
+    private GameObject newRecodeText;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class TimeAttackEndDirector : MonoBehaviour {
         int bestTime = PlayerPrefs.GetInt("BestTime", (int)1e9);
         if(bestTime > clearTime)
         {
+            newRecodeText.SetActive(true);
             PlayerPrefs.SetInt("BestTime", clearTime);
 
             bestTimeText.text = "自己ベスト：" + minutes.ToString("00") + ":" + seconds.ToString("00");

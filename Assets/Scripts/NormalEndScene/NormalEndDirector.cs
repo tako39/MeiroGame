@@ -6,9 +6,10 @@ public class NormalEndDirector : MonoBehaviour
 {
     [SerializeField]
     private Text nowCountText;
-
     [SerializeField]
     private Text bestCountText;
+    [SerializeField]
+    private GameObject newRecodeText;
 
     private void Awake()
     {
@@ -41,11 +42,12 @@ public class NormalEndDirector : MonoBehaviour
 
         if(nowCount > bestCount)
         {
+            newRecodeText.SetActive(true);
             PlayerPrefs.SetInt(bestCountStr, nowCount);
         }
 
         nowCountText.text  = "今回の記録："   + nowCount.ToString()  + "回";
-        bestCountText.text = "最高記録：" + bestCount.ToString() + "回";
+        bestCountText.text = "過去の最高記録：" + bestCount.ToString() + "回";
     }
 
     // Update is called once per frame

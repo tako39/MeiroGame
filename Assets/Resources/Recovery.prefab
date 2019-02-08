@@ -60,7 +60,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 8632bb089b7b3894a8ffea1c4c7c6b24, type: 2}
-  - {fileID: 2100000, guid: 38296b3e5db274c46bf7381c929b4852, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -105,3 +104,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db44451880187a44dab82f1d549f9c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  recoveryMaterial: {fileID: 2100000, guid: 8632bb089b7b3894a8ffea1c4c7c6b24, type: 2}
+  roadMaterial: {fileID: 2100000, guid: 38296b3e5db274c46bf7381c929b4852, type: 2}
