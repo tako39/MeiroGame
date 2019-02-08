@@ -135,8 +135,11 @@ public class Map
 
         if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
         {
-            SetTrap();      //通常プレイのときは迷路に罠を追加
-            if(Random.Range(0, 2) == 0) SetRecovery();  //偶に回復床も追加
+            SetTrap();      //通常プレイは迷路に罠を追加
+            if (GameManager.Instance.GetGameType() != GameManager.GameType.EASY)    //難易度簡単以外
+            {
+                if (Random.Range(0, 2) == 0) SetRecovery();  //偶に回復床も追加
+            }
         }
     }
 
