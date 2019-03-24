@@ -4,9 +4,9 @@
 public class Initialization : MonoBehaviour {
     
     [SerializeField]
-    private GameObject initial;
+    private GameObject initial; //初期化ボタン
 
-    private int pushCount;  //押された回数
+    private int pushCount;      //押された回数
 
 	// Use this for initialization
 	private void Start () {
@@ -22,7 +22,7 @@ public class Initialization : MonoBehaviour {
     {
         pushCount++;
 
-        if (pushCount > 5)
+        if (pushCount >= 5)  //５回押されたら表示
         {
             pushCount = 0;
             initial.SetActive(true);

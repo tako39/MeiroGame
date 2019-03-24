@@ -4,8 +4,23 @@ using UnityEngine;
 //StartSceneのStartPlayerにアタッチ(タイトル画面のプレイヤー)
 public class StartPlayer : MonoBehaviour {
 
-    private int[] direct = new int[] { -1, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 0, 0 };   //0:右 1:上 2:左 3:下
-    private int dNum;   //directの番号
+    private readonly int[] direct 
+        = new int[] { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 0, 0 };    //進む方向
+
+    private int directNum;          //directの番号
+
+    private const int startDir = 0; //最初の向き
+    private const int endDir = 15;  //最後の向き
+
+    private enum Direct
+    {
+        RIGHT = 0,  //右
+        UP = 1,     //上
+        LEFT = 2,   //左
+        DOWN = 3,   //下
+
+        NONE = -1,  //なし
+    }
 
     private Vector3 rotatePoint = Vector3.zero; //回転中心
     private Vector3 rotateAxis = Vector3.zero;  //回転軸
@@ -14,11 +29,11 @@ public class StartPlayer : MonoBehaviour {
     private float cubeSizeHalf = 0.0f;  //キューブの半分
     private bool isRotate = false;      //回転中か
 
-    private int[] startPos = new int[] {5, 1};  //最初の位置
+    private readonly int[] startPos = new int[] {5, 1};  //最初の位置
 
     // Use this for initialization
     private void Start () {
-        dNum = -1;
+        directNum = startDir - 1;
         cubeSizeHalf = transform.localScale.x / 2.0f;
         transform.position = new Vector3(startPos[1], 0.0f, startPos[0]);
     }
@@ -27,42 +42,47 @@ public class StartPlayer : MonoBehaviour {
 	private void Update () {
         if (isRotate) return;   //回転中は何もしない
 
-        dNum++;
-        if (dNum > 16)
-        {
-            dNum = 0;
-            transform.position = new Vector3(startPos[1], 0.0f, startPos[0]);   //スタート位置に移動
-        }
+        NextDirect();           //方向の切り替え
 
-        Movedirectection();        //回転中心と回転軸を決める
+        MoveDirect();           //回転中心と回転軸を決める
 
         StartCoroutine(MoveCube()); //ここで回転を始める
     }
 
-    private void Movedirectection()    //回転中心と回転軸の決定
+    private void NextDirect()   //方向を切り替える
     {
-        if (direct[dNum] == 0)  //右
-        {
-            rotatePoint = transform.position + new Vector3(cubeSizeHalf, -cubeSizeHalf, 0.0f);
-            rotateAxis = new Vector3(0.0f, 0.0f, -1.0f);
-        }
+        directNum++;
 
-        if (direct[dNum] == 1)  //上
+        if (directNum > endDir)
         {
-            rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, cubeSizeHalf);
-            rotateAxis = new Vector3(1.0f, 0.0f, 0.0f);
+            directNum = startDir;
+            transform.position = new Vector3(startPos[1], 0.0f, startPos[0]);   //スタート位置に移動
         }
+    }
 
-        if (direct[dNum] == 2)  //左
+    private void MoveDirect()    //回転中心と回転軸の決定
+    {
+        switch(direct[directNum])   //現在の方向
         {
-            rotatePoint = transform.position + new Vector3(-cubeSizeHalf, -cubeSizeHalf, 0.0f);
-            rotateAxis = new Vector3(0.0f, 0.0f, 1.0f);
-        }
+            case (int)Direct.RIGHT:
+                rotatePoint = transform.position + new Vector3(cubeSizeHalf, -cubeSizeHalf, 0.0f);
+                rotateAxis = new Vector3(0.0f, 0.0f, -1.0f);
+                break;
 
-        if (direct[dNum] == 3)  //下
-        {
-            rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, -cubeSizeHalf);
-            rotateAxis = new Vector3(-1.0f, 0.0f, 0.0f);
+            case (int)Direct.UP:
+                rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, cubeSizeHalf);
+                rotateAxis = new Vector3(1.0f, 0.0f, 0.0f);
+                break;
+
+            case (int)Direct.LEFT:
+                rotatePoint = transform.position + new Vector3(-cubeSizeHalf, -cubeSizeHalf, 0.0f);
+                rotateAxis = new Vector3(0.0f, 0.0f, 1.0f);
+                break;
+
+            case (int)Direct.DOWN:
+                rotatePoint = transform.position + new Vector3(0.0f, -cubeSizeHalf, -cubeSizeHalf);
+                rotateAxis = new Vector3(-1.0f, 0.0f, 0.0f);
+                break;
         }
     }
 

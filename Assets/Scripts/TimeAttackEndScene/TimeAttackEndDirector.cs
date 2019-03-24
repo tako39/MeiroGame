@@ -5,19 +5,16 @@ using UnityEngine.UI;
 public class TimeAttackEndDirector : MonoBehaviour {
 
     [SerializeField]
-    private Text clearTimeText;  //クリア時間の表示
+    private Text clearTimeText;         //クリア時間の表示
     [SerializeField]
-    private Text bestTimeText;   //ベストタイムの表示
+    private Text bestTimeText;          //ベストタイムの表示
     [SerializeField]
-    private GameObject newRecodeText;
+    private GameObject newRecodeText;   //新記録かどうか
 
     private void Awake()
     {
-        SoundManager.Instance.EndBGM();   //BGM開始
-    }
+        SoundManager.Instance.EndBGM(); //BGM開始
 
-    // Use this for initialization
-    private void Start () {
         int clearTime = GameManager.Instance.GetTotalTime();    //クリア時間を取得
 
         int minutes = clearTime / 60;   //分
@@ -28,13 +25,14 @@ public class TimeAttackEndDirector : MonoBehaviour {
         int bestTime = PlayerPrefs.GetInt("BestTime", (int)1e9);
         if(bestTime > clearTime)
         {
-            newRecodeText.SetActive(true);
             PlayerPrefs.SetInt("BestTime", clearTime);
 
             bestTimeText.text = "自己ベスト：" + minutes.ToString("00") + ":" + seconds.ToString("00");
         }
         else
         {
+            newRecodeText.SetActive(false);
+
             int min = bestTime / 60;
             int sec = bestTime % 60;
             bestTimeText.text = "自己ベスト：" + min.ToString("00") + ":" + sec.ToString("00");

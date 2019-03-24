@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-
 //StartSceneのStartDirectorにアタッチ(最初の画面の迷路の表示)
 public class StartDirector : MonoBehaviour {
 
@@ -35,25 +34,27 @@ public class StartDirector : MonoBehaviour {
         {
             for (int x = 0; x < WIDTH; x++)
             {
-                if (map[z, x] == (int)GameManager.MapType.ROAD)          //通路の床
+                switch(map[z, x])
                 {
-                    GameObject road = (GameObject)Resources.Load("Road_s");
-                    Instantiate(road, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
-                }
-                else if (map[z, x] == (int)GameManager.MapType.WALL)     //壁
-                {
-                    GameObject wall = (GameObject)Resources.Load("Wall_s");
-                    Instantiate(wall, new Vector3(x, 0.0f, -z + 10), Quaternion.identity);
-                }
-                else if (map[z, x] == (int)GameManager.MapType.START)    //スタートの床
-                {
-                    GameObject start = (GameObject)Resources.Load("Start_s");
-                    Instantiate(start, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
-                }
-                else if (map[z, x] == (int)GameManager.MapType.GOAL)     //ゴールの床
-                {
-                    GameObject goal = (GameObject)Resources.Load("Goal_s");
-                    Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
+                    case (int)GameManager.MapType.ROAD:
+                        GameObject road = (GameObject)Resources.Load("Road_s");
+                        Instantiate(road, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.WALL:
+                        GameObject wall = (GameObject)Resources.Load("Wall_s");
+                        Instantiate(wall, new Vector3(x, 0.0f, -z + 10), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.START:
+                        GameObject start = (GameObject)Resources.Load("Start_s");
+                        Instantiate(start, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.GOAL:
+                        GameObject goal = (GameObject)Resources.Load("Goal_s");
+                        Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
+                        break;
                 }
             }
         }

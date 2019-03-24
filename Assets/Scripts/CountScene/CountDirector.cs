@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-
 //CountSceneのCountDirectorにアタッチ
 public class CountDirector : MonoBehaviour {
 
@@ -16,16 +15,30 @@ public class CountDirector : MonoBehaviour {
     // Use this for initialization
     private void Start () {
         SoundManager.Instance.CountSound();  //カウントダウン音
-        sumTime = 2.0f;         //2 -> 1 -> 0
+        sumTime = 3.0f;
         isSceneChange = true;
 	}
 	
 	// Update is called once per frame
 	private void Update () {
         sumTime -= Time.deltaTime;  //カウントダウンする
+
+        TextChange();   //表示を変更
+    }
+
+    private void TextChange()   //2 -> 1 -> 0
+    {
         seconds = (int)sumTime;
 
-        if (seconds < 0)
+        if(seconds > 1)
+        {
+            countText.text = "2";
+        }
+        else if(seconds > 0)
+        {
+            countText.text = "1";
+        }
+        else
         {
             countText.text = "0";
 
@@ -34,14 +47,6 @@ public class CountDirector : MonoBehaviour {
                 isSceneChange = false;
                 StartCoroutine(GameManager.Instance.LoadSceneAsync("GameScene"));   //ゲームシーンへ
             }
-        }
-        else if (seconds == 0)
-        {
-            countText.text = "1";
-        }
-        else if (seconds == 1)
-        {
-            countText.text = "2";
         }
     }
 }

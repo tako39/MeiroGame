@@ -10,12 +10,11 @@ public class GameManager : MonoBehaviour
     private int[] mazeSize = new int[3];                //迷路の大きさ
     private GameType gameType = GameType.TIME_ATTACK;   //ゲームの種類
 
-    private int playerHp = 100;            //プレイヤーのHP
+    private bool isPause = false;   //ポーズ中かどうか
 
-    private bool isPause = false;          //ポーズ中かどうか
-
-    private int goalCount = 0;             //ゴールした数
-    private int totalTime = 0;             //タイムアタックでゴールした時間
+    private int playerHp = 100;     //プレイヤーのHP
+    private int goalCount = 0;      //ゴールした数
+    private int totalTime = 0;      //タイムアタックでゴールした時間
 
     public enum MapType
     {
@@ -36,12 +35,15 @@ public class GameManager : MonoBehaviour
         TIME_ATTACK = 3,    //タイムアタック
     }
 
-    public const int incorrectDamage = 20;  //不正解経路によるダメージ
-    public const int trapDamage = 20;       //罠によるダメージ
-    public const int recoveryAmount = 20;   //回復床による回復
+    public enum HpAffect
+    {
+        IncorrectDamage = 20,   //不正解経路によるダメージ
+        TrapDamage = 20,        //罠によるダメージ
+        Recovery = 20,          //回復床による回復
+    }
 
-    public const int maxPlayerHp = 100;    //プレイヤーの最大HP
-    public const int minPlayerHp = 0;      //プレイヤーの最小HP
+    public const int maxPlayerHp = 100;     //プレイヤーの最大HP
+    public const int minPlayerHp = 0;       //プレイヤーの最小HP
 
     public IEnumerator LoadSceneAsync(string sceneName ,bool autoChangeSceneAfterLoading = true)
     {
@@ -66,37 +68,39 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(Instance);
     }
 
-    public void SetGameType(GameType type)        //ゲームの種類をセット
+    public void SetGameType(GameType type)  //ゲームの種類をセット
     {
         gameType = type;
     }
 
-    public GameType GetGameType()                 //ゲームの種類を取得
+    public GameType GetGameType()            //ゲームの種類を取得
     {
         return gameType;
     }
 
     public void SetMazeSize()                //難易度に応じた迷路の設定
     {
-        if (gameType == GameType.EASY)
+        switch (gameType)
         {
-            mazeSize = new int[] { 11, 13, 15 };
-        }
-        else if (gameType == GameType.NORMAL)
-        {
-            mazeSize = new int[] { 15, 17, 19 };
-        }
-        else if (gameType == GameType.DIFFICULT)
-        {
-            mazeSize = new int[] { 19, 21, 23 };
-        }
-        else if (gameType == GameType.TIME_ATTACK)
-        {
-            mazeSize = new int[] { 13, 17, 21 };
+            case GameType.EASY:
+                mazeSize = new int[] { 11, 13, 15 };
+                break;
+
+            case GameType.NORMAL:
+                mazeSize = new int[] { 15, 17, 19 };
+                break;
+
+            case GameType.DIFFICULT:
+                mazeSize = new int[] { 19, 21, 23 };
+                break;
+
+            case GameType.TIME_ATTACK:
+                mazeSize = new int[] { 13, 17, 21 };
+                break;
         }
     }
 
-    public int GetMazeSize(int num)               //迷路の大きさの取得
+    public int GetMazeSize(int num)          //迷路の大きさの取得
     {
         return mazeSize[num];
     }
@@ -111,14 +115,14 @@ public class GameManager : MonoBehaviour
         return playerHp;
     }
 
-    public void PlayerDamaged(int amount)             //ダメージを受ける
+    public void PlayerDamaged(HpAffect amount)             //ダメージを受ける
     {
-        playerHp -= amount;
+        playerHp -= (int)amount;
     }
 
-    public void PlayerRecovered(int amount)           //回復する
+    public void PlayerRecovered(HpAffect amount)           //回復する
     {
-        if(playerHp + amount <= maxPlayerHp) playerHp += amount;
+        if(playerHp + (int)amount <= maxPlayerHp) playerHp += (int)amount;
     }
 
     public void SetIsPause(bool pause)   //ポーズ中かどうかをセット
@@ -131,9 +135,9 @@ public class GameManager : MonoBehaviour
         return isPause;
     }
 
-    public void SetGoalCount(int num)    //ゴール数をセットする
+    public void ResetGoalCount()         //ゴール数を初期化
     {
-        goalCount = num;
+        goalCount = 0;
     }
 
     public int GetGoalCount()            //ゴール数を取得

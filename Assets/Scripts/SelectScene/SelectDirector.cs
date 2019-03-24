@@ -14,7 +14,7 @@ public class SelectDirector : MonoBehaviour
     private void Start()
     {
         GameManager.Instance.SetPlayerHp(GameManager.maxPlayerHp);
-        GameManager.Instance.SetGoalCount(0);   //ゴール数の初期化
+        GameManager.Instance.ResetGoalCount();   //ゴール数の初期化
     }
 
     // Update is called once per frame

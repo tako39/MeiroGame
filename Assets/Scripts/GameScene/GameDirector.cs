@@ -32,35 +32,37 @@ public class GameDirector : MonoBehaviour {
         {
             for (int x = 0; x < gameMap.WIDTH; x++)
             {
-                if (gameMap.map[y, x] == (int)GameManager.MapType.ROAD)          //通路の床
+                switch(gameMap.map[y, x])
                 {
-                    gameObject[y, x] = (GameObject)Resources.Load("Road");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if (gameMap.map[y, x] == (int)GameManager.MapType.WALL)     //壁
-                {
-                    gameObject[y, x] = (GameObject)Resources.Load("Wall");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.0f), Quaternion.identity);
-                }
-                else if (gameMap.map[y, x] == (int)GameManager.MapType.START)    //スタートの床
-                {
-                    gameObject[y, x] = (GameObject)Resources.Load("Start");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if (gameMap.map[y, x] == (int)GameManager.MapType.GOAL)    //ゴールの床
-                {
-                    gameObject[y, x] = (GameObject)Resources.Load("Goal");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if (gameMap.map[y, x] == (int)GameManager.MapType.TRAP)      //罠の床
-                {
-                    gameObject[y, x] = (GameObject)Resources.Load("Trap");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
-                }
-                else if (gameMap.map[y, x] == (int)GameManager.MapType.RECOVERY)  //回復床
-                {
-                    gameObject[y, x] = (GameObject)Resources.Load("Recovery");
-                    Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                    case (int)GameManager.MapType.ROAD:
+                        gameObject[y, x] = (GameObject)Resources.Load("Road");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.WALL:
+                        gameObject[y, x] = (GameObject)Resources.Load("Wall");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.0f), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.START:
+                        gameObject[y, x] = (GameObject)Resources.Load("Start");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.GOAL:
+                        gameObject[y, x] = (GameObject)Resources.Load("Goal");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.TRAP:
+                        gameObject[y, x] = (GameObject)Resources.Load("Trap");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                        break;
+
+                    case (int)GameManager.MapType.RECOVERY:
+                        gameObject[y, x] = (GameObject)Resources.Load("Recovery");
+                        Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
+                        break;
                 }
             }
         }
@@ -83,7 +85,7 @@ public class Map
         NOT_MADE = 1,   //生成していない
     }
 
-    private List<Vector2> dir = new List<Vector2>()           //上下左右４方向
+    private readonly List<Vector2> dir = new List<Vector2>()           //上下左右４方向
     {
         new Vector2(1, 0),
         new Vector2(0, 1),
@@ -106,7 +108,7 @@ public class Map
     private List<Vector2> node = new List<Vector2>();       //壁が伸びていない柱
     private List<Vector2> path = new List<Vector2>();       //探索済の柱
 
-    private List<Vector2> dir2 = new List<Vector2>()        //方向
+    private List<Vector2> dir2 = new List<Vector2>()        //二つ先の方向
     {
             new Vector2(2, 0),
             new Vector2(0, 2),
@@ -129,13 +131,13 @@ public class Map
         GoalSearch(goalPos);    //(p1)をスタート地点とし、そこから一番遠い点(p2)をゴール地点とする
 
         map[(int)startPos.y, (int)startPos.x] = (int)GameManager.MapType.START;  //スタート地点
-        map[(int)goalPos.y, (int)goalPos.x] = (int)GameManager.MapType.GOAL;  //ゴール地点
+        map[(int)goalPos.y, (int)goalPos.x] = (int)GameManager.MapType.GOAL;     //ゴール地点
 
         AnsRouteSearch();       //正解の経路を求める
 
         if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
         {
-            SetTrap();      //通常プレイは迷路に罠を追加
+            SetTrap();          //通常プレイは迷路に罠を追加
             if (GameManager.Instance.GetGameType() != GameManager.GameType.EASY)    //難易度簡単以外
             {
                 if (Random.Range(0, 2) == 0) SetRecovery();  //偶に回復床も追加
@@ -180,7 +182,7 @@ public class Map
         }
     }
 
-    private int SearchPath(Vector2 p)   //探索済みかどうか
+    private int SearchPath(Vector2 p)   //pが探索済みかどうか
     {
         for(int i = 0; i < path.Count; i++)
         {
@@ -192,7 +194,7 @@ public class Map
         return (int)RETURN.NONE;
     }
 
-    private int SearchNode(Vector2 p)   //未探索かどうか
+    private int SearchNode(Vector2 p)   //pが未探索かどうか
     {
         for (int i = 0; i < node.Count; i++)
         {
@@ -206,26 +208,27 @@ public class Map
 
     private int ChooseNode(Vector2 p)   //壁伸ばし法
     {
-        if(SearchPath(p) != (int)RETURN.NONE) //探索済なら
+        if(SearchPath(p) != (int)RETURN.NONE) //探索済なら終了
         {
-            return (int)RETURN.NOT_MADE;    //生成できない
+            return (int)RETURN.NOT_MADE;
         }
-        else    //未探索なら
+        else                                  //未探索なら壁を繋げていく
         {
-            path.Add(p);    //pathに入れる
+            path.Add(p);
 
             int sNode = SearchNode(p);
-            if (sNode != (int)RETURN.NONE)    //未探索のとき
+            if (sNode != (int)RETURN.NONE)    //未探索がまだあるとき、探索をしていく
             {
-                node.RemoveAt(sNode);   //nodeから削除
+                node.RemoveAt(sNode);
 
-                dir2 = dir2.OrderBy(n => System.Guid.NewGuid()).ToList(); //シャッフル
+                dir2 = dir2.OrderBy(n => System.Guid.NewGuid()).ToList();   //４方向をシャッフル
 
                 int r = 0;
                 for (int i = 0; i < 4; i++)
                 {
                     r = ChooseNode(new Vector2(p.x + (int)dir2[i].x, p.y + (int)dir2[i].y));
-                    if(r == (int)RETURN.MADE)
+
+                    if (r == (int)RETURN.MADE)
                     {
                         break;
                     }
@@ -233,13 +236,13 @@ public class Map
 
                 if(r == (int)RETURN.NOT_MADE)
                 {
-                    node.Add(path[path.Count - 1]);     //pathから戻す
+                    node.Add(path[path.Count - 1]);
                     path.RemoveAt(path.Count - 1);
                 }
 
                 return r;
             }
-            else    //既に壁のとき、pathを繋げる
+            else    //未探索がないとき、探索済を繋げていく
             {
                 Vector2 p_1, p_2;
                 
@@ -399,36 +402,37 @@ public class Map
         {
             for (int x = 0; x < WIDTH; x++)
             {
-                if(map[y, x] == (int)GameManager.MapType.ROAD)
+                switch(map[y, x])
                 {
-                    if (ansRoute[y, x] == (int)GameManager.MapType.ANS_ROUTE)
-                    {
-                        debug += "<color=red>0</color>";
-                    }
-                    else
-                    {
-                        debug += "0";
-                    }
-                }
-                else if(map[y, x] == (int)GameManager.MapType.WALL)
-                {
-                    debug += "1";
-                }
-                else if(map[y, x] == (int)GameManager.MapType.START)
-                {
-                    debug += "<color=blue>2</color>";
-                }
-                else if(map[y, x] == (int)GameManager.MapType.GOAL)
-                {
-                    debug += "<color=green>3</color>";
-                }
-                else if(map[y, x] == (int)GameManager.MapType.TRAP)
-                {
-                    debug += "4";
-                }
-                else if(map[y, x] == (int)GameManager.MapType.RECOVERY)
-                {
-                    debug += "5";
+                    case (int)GameManager.MapType.ROAD:
+                        if (ansRoute[y, x] == (int)GameManager.MapType.ANS_ROUTE)
+                        {
+                            debug += "<color=red>0</color>";
+                        }
+                        else
+                        {
+                            debug += "0";
+                        }
+                        break;
+
+                    case (int)GameManager.MapType.WALL:
+                        debug += "1";
+                        break;
+
+                    case (int)GameManager.MapType.START:
+                        debug += "<color=blue>2</color>";
+                        break;
+                    case (int)GameManager.MapType.GOAL:
+                        debug += "<color=green>3</color>";
+                        break;
+
+                    case (int)GameManager.MapType.TRAP:
+                        debug += "4";
+                        break;
+
+                    case (int)GameManager.MapType.RECOVERY:
+                        debug += "5";
+                        break;
                 }
             }
             debug += "\n";

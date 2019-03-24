@@ -6,8 +6,8 @@ using UnityEngine.UI;
 //GameSceneのPlayerにアタッチ(プレイヤー操作)
 public class PlayerController : MonoBehaviour {
 
-    private int[] dx = new int[] { 1, -1, 0, 0 }; //右、左、上、下
-    private int[] dy = new int[] { 0, 0, -1, 1 };
+    private readonly int[] dx = new int[] { 1, -1, 0, 0 }; //右、左、上、下
+    private readonly int[] dy = new int[] { 0, 0, -1, 1 };
 
     private static Vector2 nowPosition = new Vector2();  //現在の位置
 
@@ -180,8 +180,8 @@ public class PlayerController : MonoBehaviour {
                 else               //それ以外はダメージを食らう
                 {
                     SoundManager.Instance.IncorrectSound();         //不正解音
-                    hpBar.TakeDamage(GameManager.incorrectDamage);  //ダメージを食らう
-                    GameManager.Instance.PlayerDamaged(GameManager.incorrectDamage);
+                    hpBar.TakeDamage((int)GameManager.HpAffect.IncorrectDamage);  //ダメージを食らう
+                    GameManager.Instance.PlayerDamaged(GameManager.HpAffect.IncorrectDamage);
                 }
 
                 onAnsRoute = true;
@@ -200,8 +200,8 @@ public class PlayerController : MonoBehaviour {
             if (firstOnTrap)        //罠に乗った瞬間
             {
                 SoundManager.Instance.DamageSound();        //ダメージ音
-                hpBar.TakeDamage(GameManager.trapDamage);   //ダメージを食らう
-                GameManager.Instance.PlayerDamaged(GameManager.trapDamage);
+                hpBar.TakeDamage((int)GameManager.HpAffect.TrapDamage);   //ダメージを食らう
+                GameManager.Instance.PlayerDamaged(GameManager.HpAffect.TrapDamage);
 
                 firstOnTrap = false;
             }
@@ -221,8 +221,8 @@ public class PlayerController : MonoBehaviour {
                 isOnRecovery = true;    //回復床に乗った
 
                 SoundManager.Instance.RecoverySound();         //回復音
-                hpBar.GainHealth(GameManager.recoveryAmount);  //回復する
-                GameManager.Instance.PlayerRecovered(GameManager.recoveryAmount);
+                hpBar.GainHealth((int)GameManager.HpAffect.Recovery);  //回復する
+                GameManager.Instance.PlayerRecovered(GameManager.HpAffect.Recovery);
                 
                 GameDirector.gameMap.map[(int)nowPosition.y, (int)nowPosition.x] = (int)GameManager.MapType.ROAD;
 

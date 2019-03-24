@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//回復床にアタッチ
 public class Recovery : MonoBehaviour
 {
     private Renderer renderer;         //マテリアル変更用
@@ -15,7 +16,6 @@ public class Recovery : MonoBehaviour
     {
         renderer = GetComponent<Renderer>();
         renderer.material = recoveryMaterial;   //回復床
-        firstRecover = true;
     }
 
     // Start is called before the first frame update

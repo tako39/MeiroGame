@@ -5,45 +5,44 @@ using UnityEngine.UI;
 public class NormalEndDirector : MonoBehaviour
 {
     [SerializeField]
-    private Text nowCountText;
+    private Text nowCountText;          //今回のクリア回数
     [SerializeField]
-    private Text bestCountText;
+    private Text bestCountText;         //最高クリア回数
     [SerializeField]
-    private GameObject newRecodeText;
+    private GameObject newRecodeText;   //新記録かどうか
 
     private void Awake()
     {
         SoundManager.Instance.EndBGM();   //BGM開始
-    }
 
-    // Start is called before the first frame update
-    private void Start()
-    {
         int nowCount = GameManager.Instance.GetGoalCount();     //今回クリアした回数
-
-        int bestCount = 0;          //最高回数
 
         string bestCountStr = "";   //保存する名前
 
-        if(GameManager.Instance.GetGameType() == GameManager.GameType.EASY)
+        switch (GameManager.Instance.GetGameType())
         {
-            bestCountStr = "BestCountEasy";
-        }
-        else if(GameManager.Instance.GetGameType() == GameManager.GameType.NORMAL)
-        {
-            bestCountStr = "BestCountNormal";
-        }
-        else if(GameManager.Instance.GetGameType() == GameManager.GameType.DIFFICULT)
-        {
-            bestCountStr = "BestCountDifficult";
+            case GameManager.GameType.EASY:
+                bestCountStr = "BestCountEasy";
+                break;
+
+            case GameManager.GameType.NORMAL:
+                bestCountStr = "BestCountNormal";
+                break;
+
+            case GameManager.GameType.DIFFICULT:
+                bestCountStr = "BestCountDifficult";
+                break;
         }
 
-        bestCount = PlayerPrefs.GetInt(bestCountStr, 0);
+        int bestCount = PlayerPrefs.GetInt(bestCountStr, 0);    //最高回数
 
-        if(nowCount > bestCount)
+        if(nowCount > bestCount)    //記録の更新
         {
-            newRecodeText.SetActive(true);
             PlayerPrefs.SetInt(bestCountStr, nowCount);
+        }
+        else                        //そうでないとき
+        {
+            newRecodeText.SetActive(false);
         }
 
         nowCountText.text  = "今回の記録："   + nowCount.ToString()  + "回";

@@ -32,7 +32,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField]
     private AudioClip endBGM;           //結果発表のBGM
 
-    private float stopTime = 0.0f;             //停止時間
+    private float stopTime = 0.0f;      //停止時間
 
     private void Awake()
     {
