@@ -3,7 +3,7 @@
 //音楽を管理するクラス
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance;
+    public static SoundManager Instance { get; private set; }
 
     [SerializeField]
     private AudioSource audioSource;
@@ -36,11 +36,15 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
         DontDestroyOnLoad(Instance);
 
         audioSource  = GetComponent<AudioSource>();
-        audioSource = GetComponent<AudioSource>();
     }
 
     // Start is called before the first frame update

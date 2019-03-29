@@ -618,7 +618,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clearTimeText: {fileID: 671251673}
   bestTimeText: {fileID: 1092583023}
-  newRecodeText: {fileID: 1904385292}
+  newRecodeText: {fileID: 1904385293}
 --- !u!4 &1339301111
 Transform:
   m_ObjectHideFlags: 0
@@ -806,7 +806,7 @@ GameObject:
   - component: {fileID: 1904385294}
   - component: {fileID: 1904385293}
   m_Layer: 5
-  m_Name: NewRecode
+  m_Name: NewRecodeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -9,7 +9,7 @@ public class TimeAttackEndDirector : MonoBehaviour {
     [SerializeField]
     private Text bestTimeText;          //ベストタイムの表示
     [SerializeField]
-    private GameObject newRecodeText;   //新記録かどうか
+    private Text newRecodeText;         //新記録かどうか
 
     private void Awake()
     {
@@ -28,14 +28,15 @@ public class TimeAttackEndDirector : MonoBehaviour {
             PlayerPrefs.SetInt("BestTime", clearTime);
 
             bestTimeText.text = "自己ベスト：" + minutes.ToString("00") + ":" + seconds.ToString("00");
+            if (!newRecodeText.enabled) newRecodeText.enabled = true;
         }
         else
         {
-            newRecodeText.SetActive(false);
-
             int min = bestTime / 60;
             int sec = bestTime % 60;
             bestTimeText.text = "自己ベスト：" + min.ToString("00") + ":" + sec.ToString("00");
+
+            if (newRecodeText.enabled)  newRecodeText.enabled = false;
         }
 	}
 	

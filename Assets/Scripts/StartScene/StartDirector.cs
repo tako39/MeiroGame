@@ -6,13 +6,13 @@ public class StartDirector : MonoBehaviour {
     private const int HEIGHT = 7;         //迷路の縦幅
     private const int WIDTH  = 7;         //迷路の横幅
 
-    private int[,] map = new int[7, 7] { { 1, 1, 1, 1 ,1, 1, 1 },
-                                         { 1, 0, 0, 0, 0, 0 ,1 },
-                                         { 1, 0, 1, 1, 1, 0, 1 },
-                                         { 1, 0, 0, 3, 1, 0, 1 },
-                                         { 1, 1, 1, 1, 1, 0, 1 },
-                                         { 1, 2, 0, 0, 0, 0, 1 },
-                                         { 1, 1, 1, 1, 1, 1, 1 } }; //スタート画面の迷路
+    private int[,] map = new int[HEIGHT, WIDTH] { { 1, 1, 1, 1 ,1, 1, 1 },
+                                                  { 1, 0, 0, 0, 0, 0 ,1 },
+                                                  { 1, 0, 1, 1, 1, 0, 1 },
+                                                  { 1, 0, 0, 3, 1, 0, 1 },
+                                                  { 1, 1, 1, 1, 1, 0, 1 },
+                                                  { 1, 2, 0, 0, 0, 0, 1 },
+                                                  { 1, 1, 1, 1, 1, 1, 1 } }; //スタート画面の迷路
 
     // Use this for initialization
     private void Start () {
@@ -37,22 +37,22 @@ public class StartDirector : MonoBehaviour {
                 switch(map[z, x])
                 {
                     case (int)GameManager.MapType.ROAD:
-                        GameObject road = (GameObject)Resources.Load("Road_s");
+                        GameObject road = (GameObject)Resources.Load("Objects/Road_s");
                         Instantiate(road, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.WALL:
-                        GameObject wall = (GameObject)Resources.Load("Wall_s");
+                        GameObject wall = (GameObject)Resources.Load("Objects/Wall_s");
                         Instantiate(wall, new Vector3(x, 0.0f, -z + 10), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.START:
-                        GameObject start = (GameObject)Resources.Load("Start_s");
+                        GameObject start = (GameObject)Resources.Load("Objects/Start_s");
                         Instantiate(start, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.GOAL:
-                        GameObject goal = (GameObject)Resources.Load("Goal_s");
+                        GameObject goal = (GameObject)Resources.Load("Objects/Goal_s");
                         Instantiate(goal, new Vector3(x, -0.5f, -z + 10), Quaternion.identity);
                         break;
                 }

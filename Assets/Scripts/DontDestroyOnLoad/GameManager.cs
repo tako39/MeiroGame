@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 //ゲームシーンなどの管理を行うクラス
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
     private int[] mazeSize = new int[3];                //迷路の大きさ
     private GameType gameType = GameType.TIME_ATTACK;   //ゲームの種類
@@ -64,6 +64,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
         DontDestroyOnLoad(Instance);
     }

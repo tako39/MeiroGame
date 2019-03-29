@@ -12,7 +12,7 @@ public class GameDirector : MonoBehaviour {
     private void Awake () {
         SoundManager.Instance.GameBGM();   //BGM開始
 
-        gameMap.CreateMaze();           //迷路生成
+        gameMap.CreateMaze();              //迷路生成
     }
 
     // Use this for initialization
@@ -35,32 +35,32 @@ public class GameDirector : MonoBehaviour {
                 switch(gameMap.map[y, x])
                 {
                     case (int)GameManager.MapType.ROAD:
-                        gameObject[y, x] = (GameObject)Resources.Load("Road");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Road");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.WALL:
-                        gameObject[y, x] = (GameObject)Resources.Load("Wall");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Wall");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.0f), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.START:
-                        gameObject[y, x] = (GameObject)Resources.Load("Start");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Start");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.GOAL:
-                        gameObject[y, x] = (GameObject)Resources.Load("Goal");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Goal");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.TRAP:
-                        gameObject[y, x] = (GameObject)Resources.Load("Trap");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Trap");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                         break;
 
                     case (int)GameManager.MapType.RECOVERY:
-                        gameObject[y, x] = (GameObject)Resources.Load("Recovery");
+                        gameObject[y, x] = (GameObject)Resources.Load("Objects/Recovery");
                         Instantiate(gameObject[y, x], new Vector3(x, -y, 0.5f), Quaternion.identity);
                         break;
                 }
@@ -116,11 +116,12 @@ public class Map
             new Vector2(0, -2),
     };
 
-    public void CreateMaze()   //壁伸ばし法で迷路を生成
+    public void CreateMaze()    //壁伸ばし法で迷路を生成
     {
-        InitMaze(); //初期化
+        SetMapSize();           //マップの大きさをセット
+        InitMaze();             //マップの初期化
 
-        while (node.Count > 0)   //nodeが無くなるまで
+        while (node.Count > 0)  //nodeが無くなるまで
         {
             ChooseNode(node[Random.Range(0, node.Count)]);
         }
@@ -135,32 +136,48 @@ public class Map
 
         AnsRouteSearch();       //正解の経路を求める
 
-        if (GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK)
+        if (IsNormalPlay())
         {
             SetTrap();          //通常プレイは迷路に罠を追加
-            if (GameManager.Instance.GetGameType() != GameManager.GameType.EASY)    //難易度簡単以外
+
+            if (IsNotEasy())
             {
                 if (Random.Range(0, 2) == 0) SetRecovery();  //偶に回復床も追加
             }
         }
     }
 
-    private void InitMaze() //迷路の初期化
+    private bool IsNormalPlay() //通常プレイかどうか
     {
-        if (GameManager.Instance.GetGameType() == GameManager.GameType.TIME_ATTACK) //タイムアタックなら13->17->21
-        {
-            if (GameManager.Instance.GetGoalCount() < 3)
-            {
-                HEIGHT = GameManager.Instance.GetMazeSize(GameManager.Instance.GetGoalCount());
-                WIDTH  = GameManager.Instance.GetMazeSize(GameManager.Instance.GetGoalCount());
-            }
-        }
-        else //通常プレイなら迷路の大きさはランダム
+        return GameManager.Instance.GetGameType() != GameManager.GameType.TIME_ATTACK;
+    }
+
+    private bool IsNotEasy()    //難易度簡単以外
+    {
+        return GameManager.Instance.GetGameType() != GameManager.GameType.EASY;
+    }
+
+    private void SetMapSize()   //マップの縦横をセット
+    {
+        if (IsNormalPlay())     //通常プレイなら迷路の大きさはランダム
         {
             HEIGHT = GameManager.Instance.GetMazeSize(Random.Range(0, 3));
-            WIDTH  = GameManager.Instance.GetMazeSize(Random.Range(0, 3));
+            WIDTH = GameManager.Instance.GetMazeSize(Random.Range(0, 3));
         }
-        
+        else                    //タイムアタックなら13->17->21
+        {
+            const int timeAttackEndCount = 3;
+
+            if (GameManager.Instance.GetGoalCount() < timeAttackEndCount)
+            {
+                HEIGHT = GameManager.Instance.GetMazeSize(GameManager.Instance.GetGoalCount());
+                WIDTH = GameManager.Instance.GetMazeSize(GameManager.Instance.GetGoalCount());
+            }
+        }
+    }
+
+    private void InitMaze()     //迷路の初期化
+    {
         for(int y = 0; y < HEIGHT; y++)
         {
             for(int x = 0; x < WIDTH; x++)
@@ -264,7 +281,7 @@ public class Map
         }
     }
 
-    private void SetTmpStart()     //仮のスタート地点をセット
+    private void SetTmpStart()          //仮のスタート地点をセット
     {
         int y = MakeRandOdd(HEIGHT - 2);    //ランダムなスタート地点(奇数)を決める
         int x = MakeRandOdd(WIDTH - 2);
@@ -291,8 +308,8 @@ public class Map
         {
             for (int x = 0; x < WIDTH; x++)
             {
-                dist[y, x] = INF;          //コストの初期化
-                ansRoute[y, x] = map[y, x];    //経路の初期化
+                dist[y, x] = INF;               //コストの初期化
+                ansRoute[y, x] = map[y, x];     //経路の初期化
                 memDirect[y, x] = Vector2.zero; //記憶する方向の初期化
             }
         }
@@ -314,7 +331,7 @@ public class Map
 
                 if (0 <= ny && ny < HEIGHT && 0 <= nx && nx < WIDTH)
                 {
-                    if (map[ny, nx] != (int)GameManager.MapType.WALL && dist[ny, nx] == INF) //通路で且つ未訪問のとき
+                    if (IsNotWallAndNotVisited(ny, nx)) //通路で且つ未訪問のとき
                     {
                         que.Enqueue(new Vector2(nx, ny));
                         dist[ny, nx] = dist[(int)p.y, (int)p.x] + 1;    //コストを＋１
@@ -332,6 +349,11 @@ public class Map
         }
 
         goalPos = tmpGoal;  //コピー
+    }
+
+    private bool IsNotWallAndNotVisited(int ty, int tx)    //通路で未訪問かどうか
+    {
+        return (map[ty, tx] != (int)GameManager.MapType.WALL) && (dist[ty, tx] == INF);
     }
 
     private void AnsRouteSearch()  //正解の経路を求める
@@ -360,15 +382,25 @@ public class Map
             int randomY = Random.Range(1, WIDTH - 1);
 
             //正解経路でないならやり直し
-            if (ansRoute[randomY, randomX] != (int)GameManager.MapType.ANS_ROUTE) continue;
+            if (!IsAnsRoute(randomY, randomX)) continue;
 
             //もし通路なら罠に変更する
-            if (map[randomY, randomX] == (int)GameManager.MapType.ROAD)
+            if (IsRoad(randomY, randomX))
             {
                 map[randomY, randomX] = (int)GameManager.MapType.TRAP;
                 break;
             }
         }
+    }
+
+    private bool IsAnsRoute(int ty, int tx)
+    {
+        return ansRoute[ty, tx] == (int)GameManager.MapType.ANS_ROUTE;
+    }
+
+    private bool IsRoad(int ty, int tx)
+    {
+        return map[ty, tx] == (int)GameManager.MapType.ROAD;
     }
 
     private void SetRecovery()  //迷路に１つ回復床を追加
@@ -380,10 +412,10 @@ public class Map
             int randomY = Random.Range(1, WIDTH - 1);
 
             //正解経路ならやり直し
-            if (ansRoute[randomY, randomX] == (int)GameManager.MapType.ANS_ROUTE) continue;
+            if (IsAnsRoute(randomY, randomX)) continue;
 
             //もし通路なら回復床に変更する
-            if (map[randomY, randomX] == (int)GameManager.MapType.ROAD)
+            if (IsRoad(randomY, randomX))
             {
                 map[randomY, randomX] = (int)GameManager.MapType.RECOVERY;
                 break;

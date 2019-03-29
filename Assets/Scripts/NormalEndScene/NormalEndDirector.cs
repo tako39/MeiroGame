@@ -9,7 +9,7 @@ public class NormalEndDirector : MonoBehaviour
     [SerializeField]
     private Text bestCountText;         //最高クリア回数
     [SerializeField]
-    private GameObject newRecodeText;   //新記録かどうか
+    private Text newRecodeText;         //新記録かどうか
 
     private void Awake()
     {
@@ -39,10 +39,11 @@ public class NormalEndDirector : MonoBehaviour
         if(nowCount > bestCount)    //記録の更新
         {
             PlayerPrefs.SetInt(bestCountStr, nowCount);
+            if (!newRecodeText.enabled) newRecodeText.enabled = true;
         }
         else                        //そうでないとき
         {
-            newRecodeText.SetActive(false);
+            if (newRecodeText.enabled)   newRecodeText.enabled = false;
         }
 
         nowCountText.text  = "今回の記録："   + nowCount.ToString()  + "回";

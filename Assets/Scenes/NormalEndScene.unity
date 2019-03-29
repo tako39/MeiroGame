@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 139285869}
   - component: {fileID: 139285868}
   m_Layer: 5
-  m_Name: NewRecode
+  m_Name: NewRecodeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -624,7 +624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nowCountText: {fileID: 1848269024}
   bestCountText: {fileID: 1432581583}
-  newRecodeText: {fileID: 139285867}
+  newRecodeText: {fileID: 139285868}
 --- !u!1 &1693063587
 GameObject:
   m_ObjectHideFlags: 0
